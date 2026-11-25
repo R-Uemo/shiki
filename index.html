@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shiki - 四季を纏う買い物リスト入力</title>
+    
+    <!-- スマホのホーム画面（デスクトップ）追加時のアプリ化設定 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Shiki">
+    <meta id="meta-theme-color" name="theme-color" content="#e11d48">
+
+    <!-- アプリアイコン＆Web App Manifest（JSで高精細PNGを自動生成・適用） -->
+    <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f43f5e'/%3E%3Cstop offset='50%25' stop-color='%23f59e0b'/%3E%3Cstop offset='100%25' stop-color='%230ea5e9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Cpath d='M28 32h44v36a6 6 0 0 1-6 6H34a6 6 0 0 1-6-6V32z' fill='none' stroke='%23ffffff' stroke-width='5'/%3E%3Cline x1='28' y1='45' x2='72' y2='45' stroke='%23ffffff' stroke-width='4'/%3E%3Cline x1='28' y1='59' x2='72' y2='59' stroke='%23ffffff' stroke-width='4'/%3E%3Cline x1='45' y1='32' x2='45' y2='74' stroke='%23ffffff' stroke-width='4'/%3E%3C/svg%3E">
+    <link id="dynamic-apple-icon" rel="apple-touch-icon" sizes="180x180" href="">
+    <link id="dynamic-manifest" rel="manifest" href="">
+
+    <!-- Google Fonts: Plus Jakarta Sans, Shippori Mincho & Zen Kaku Gothic New -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Zen Kaku Gothic New"', 'sans-serif'],
+                        display: ['"Plus Jakarta Sans"', '"Zen Kaku Gothic New"', 'sans-serif'],
+                        serifjp: ['"Shippori Mincho"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 四季テーマ用カスタムプロパティ（デフォルト：秋） */
+        :root {
+            --bg-base: #fcfaf7;
+            --orb-1: rgba(251, 191, 36, 0.26);
+            --orb-2: rgba(249, 115, 22, 0.20);
+            --orb-3: rgba(244, 63, 94, 0.14);
+            --accent-main: #d97706;
+            --accent-deep: #b45309;
+            --accent-soft: rgba(245, 158, 11, 0.11);
+            --accent-soft-hover: rgba(245, 158, 11, 0.18);
+            --accent-border: rgba(245, 158, 11, 0.32);
+            --accent-ring: rgba(245, 158, 11, 0.16);
+            --grad-line: linear-gradient(90deg, #fbbf24 0%, #f97316 50%, #e11d48 100%);
+            --grad-btn: linear-gradient(135deg, #f59e0b 0%, #ea580c 55%, #e11d48 100%);
+            --btn-shadow: rgba(234, 88, 12, 0.28);
+            --card-glow: rgba(217, 119, 6, 0.08);
+            --particle-color: #ea580c;
+        }
+
+        /* 滑らかな季節カラー遷移 */
+        body, .theme-transition, input, button, a {
+            transition: background-color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                        color 0.35s ease,
+                        box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            background-color: var(--bg-base);
+        }
+
+        /* 季節のグラデーション要素 */
+        .seasonal-accent-line {
+            background: var(--grad-line);
+        }
+
+        .seasonal-btn-primary {
+            background: var(--grad-btn);
+            box-shadow: 0 14px 28px -8px var(--btn-shadow);
+        }
+        .seasonal-btn-primary:hover:not(:disabled) {
+            filter: brightness(1.04);
+            transform: translateY(-1px);
+            box-shadow: 0 18px 34px -8px var(--btn-shadow);
+        }
+        .seasonal-btn-primary:active:not(:disabled) {
+            transform: scale(0.985);
+        }
+
+        .seasonal-card {
+            box-shadow: 0 24px 60px -16px var(--card-glow), 0 4px 16px -4px rgba(15, 23, 42, 0.03);
+        }
+
+        .seasonal-badge {
+            background-color: var(--accent-soft);
+            color: var(--accent-deep);
+            border-color: var(--accent-border);
+        }
+
+        .seasonal-input:focus {
+            border-color: var(--accent-main);
+            box-shadow: 0 0 0 4px var(--accent-ring);
+        }
+
+        .seasonal-chip:hover {
+            background-color: var(--accent-soft);
+            color: var(--accent-deep);
+            border-color: var(--accent-border);
+        }
+
+        /* 選択された入力者カードのスタイル */
+        .author-radio:checked + .author-card {
+            border-color: var(--accent-main);
+            background-color: var(--accent-soft);
+            box-shadow: 0 8px 20px -6px var(--card-glow);
+        }
+        .author-radio:checked + .author-card .author-check {
+            opacity: 1;
+            transform: scale(1);
+            background-color: var(--accent-main);
+        }
+
+        /* 季節の浮遊パーティクルアニメーション */
+        @keyframes seasonalFloat {
+            0% {
+                transform: translateY(-12vh) translateX(0px) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.42;
+            }
+            50% {
+                transform: translateY(45vh) translateX(22px) rotate(140deg);
+            }
+            85% {
+                opacity: 0.35;
+            }
+            100% {
+                transform: translateY(108vh) translateX(-16px) rotate(280deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes summerShimmer {
+            0%, 100% {
+                transform: translateY(0px) scale(0.92);
+                opacity: 0.16;
+            }
+            50% {
+                transform: translateY(-18px) scale(1.08);
+                opacity: 0.42;
+            }
+        }
+
+        .seasonal-particle {
+            position: absolute;
+            top: -40px;
+            color: var(--particle-color);
+            pointer-events: none;
+            will-change: transform, opacity;
+            animation-name: seasonalFloat;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        .seasonal-particle.summer-mode {
+            top: auto;
+            animation-name: summerShimmer;
+            animation-timing-function: ease-in-out;
+        }
+
+        /* スクロールバー非表示ユーティリティ */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 font-sans antialiased selection:bg-slate-900/10 pb-16 relative overflow-x-hidden">
+
+    <!-- 四季のオーガニック・メッシュ背景＆浮遊モチーフ層 -->
+    <div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+        <!-- 柔らかな光彩オーブ -->
+        <div id="bg-orb-1" class="absolute -top-36 -left-24 w-[440px] h-[440px] rounded-full blur-3xl transition-colors duration-700" style="background: var(--orb-1);"></div>
+        <div id="bg-orb-2" class="absolute top-24 -right-28 w-[380px] h-[380px] rounded-full blur-3xl transition-colors duration-700" style="background: var(--orb-2);"></div>
+        <div id="bg-orb-3" class="absolute -bottom-24 left-1/4 w-[420px] h-[420px] rounded-full blur-3xl transition-colors duration-700" style="background: var(--orb-3);"></div>
+        
+        <!-- 繊細な季節モチーフ（JSで季節に応じたSVGを生成） -->
+        <div id="seasonal-particles-layer" class="absolute inset-0 overflow-hidden"></div>
+    </div>
+
+    <!-- トップナビゲーションバー -->
+    <header class="sticky top-0 z-30 bg-white/70 backdrop-blur-2xl border-b border-slate-200/50">
+        <div class="max-w-lg mx-auto px-4 h-16 flex items-center justify-between gap-2">
+            <!-- ブランド＆季節の詩的サブタイトル -->
+            <div class="flex items-center gap-3 min-w-0">
+                <div id="brand-icon-box" class="w-10 h-10 rounded-2xl seasonal-btn-primary flex items-center justify-center text-white shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"></path>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-display text-xl font-extrabold tracking-tight text-slate-900 leading-none">Shiki</h1>
+                        <span id="season-pill-tag" class="px-2 py-0.5 text-[10px] font-serifjp font-semibold rounded-full border seasonal-badge">
+                            秋・紅葉
+                        </span>
+                    </div>
+                    <p id="season-poetic-caption" class="font-serifjp text-[11px] text-slate-500 truncate mt-1">
+                        秋の深まりと実りの季節
+                    </p>
+                </div>
+            </div>
+
+            <!-- ヘッダー右アクション -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button id="btn-open-settings" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white/90 hover:bg-white border border-slate-200/80 shadow-2xs active:scale-95 transition cursor-pointer" title="シート連携・設定">
+                    <span id="header-conn-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <span>連携設定</span>
+                </button>
+
+                <button id="btn-home-guide" type="button" class="p-2 rounded-xl text-slate-600 bg-white/90 hover:bg-white border border-slate-200/80 shadow-2xs active:scale-95 transition cursor-pointer" title="スマホのホーム画面に追加">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="5" y="2" width="14" height="20" rx="2.5"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="max-w-lg mx-auto px-4 pt-4 space-y-4">
+
+        <!-- 四季テーマスイッチャー＆スプレッドシートクイックアクセスバー -->
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+            <!-- 春夏秋冬スイッチャー -->
+            <div class="inline-flex items-center p-1 rounded-2xl bg-white/75 backdrop-blur-md border border-slate-200/70 shadow-2xs" role="group" aria-label="季節テーマ切替">
+                <button type="button" data-season-choice="auto" class="season-switch-btn px-2.5 py-1 rounded-xl text-[11px] font-bold transition cursor-pointer">
+                    自動
+                </button>
+                <button type="button" data-season-choice="spring" class="season-switch-btn px-2.5 py-1 rounded-xl text-[11px] font-serifjp font-semibold transition cursor-pointer">
+                    春
+                </button>
+                <button type="button" data-season-choice="summer" class="season-switch-btn px-2.5 py-1 rounded-xl text-[11px] font-serifjp font-semibold transition cursor-pointer">
+                    夏
+                </button>
+                <button type="button" data-season-choice="autumn" class="season-switch-btn px-2.5 py-1 rounded-xl text-[11px] font-serifjp font-semibold transition cursor-pointer">
+                    秋
+                </button>
+                <button type="button" data-season-choice="winter" class="season-switch-btn px-2.5 py-1 rounded-xl text-[11px] font-serifjp font-semibold transition cursor-pointer">
+                    冬
+                </button>
+            </div>
+
+            <!-- スプレッドシート本体へのスマートリンク -->
+            <div class="flex items-center">
+                <a id="link-open-sheet" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold bg-white/85 hover:bg-white border border-slate-200/80 shadow-2xs text-slate-700 active:scale-95 transition">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>シートを開く</span>
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+                <button id="btn-setup-now" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold bg-white/85 hover:bg-white border border-slate-200/80 shadow-2xs text-slate-700 active:scale-95 transition cursor-pointer">
+                    <span id="banner-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <span id="banner-btn-label">シート連携設定</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 洗練されたメイン入力フォームカード -->
+        <section class="relative bg-white/88 backdrop-blur-2xl rounded-[32px] border border-white shadow-xl seasonal-card overflow-hidden">
+            <!-- カード上部の四季グラデーションライン -->
+            <div class="h-1.5 w-full seasonal-accent-line"></div>
+
+            <form id="send-item-form" class="p-6 sm:p-7 space-y-6">
+                
+                <!-- 01. 買いたいもの・数量（自由記述） -->
+                <div class="space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <label for="input-content" class="flex items-center gap-2 text-xs font-bold tracking-wide text-slate-800">
+                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-display font-extrabold border seasonal-badge">1</span>
+                            <span>買いたいもの・数量</span>
+                        </label>
+                        <span id="char-indicator" class="text-[11px] font-medium text-slate-400">自由記述</span>
+                    </div>
+
+                    <div class="relative">
+                        <input id="input-content" type="text" required autocomplete="off"
+                            placeholder="例：牛乳 2本、たまご 1パック"
+                            class="seasonal-input w-full pl-4 pr-11 py-4 text-base sm:text-lg font-medium text-slate-900 bg-slate-50/75 border-2 border-slate-200/70 rounded-2xl focus:bg-white focus:outline-none placeholder:text-slate-400 placeholder:font-normal">
+                        
+                        <!-- 入力クリアボタン -->
+                        <button id="btn-clear-text" type="button" aria-label="入力をクリア"
+                            class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-200/80 text-slate-600 hover:bg-slate-300 flex items-center justify-center transition cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- ワンタップ数量補助チップ -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
+                        <span class="text-[10px] font-semibold text-slate-400 shrink-0 mr-0.5">数量:</span>
+                        <button type="button" data-append=" 1個" class="append-chip seasonal-chip px-2.5 py-1 rounded-xl text-[11px] font-medium bg-slate-100/80 text-slate-600 border border-transparent active:scale-95 transition shrink-0 cursor-pointer">+ 1個</button>
+                        <button type="button" data-append=" 2個" class="append-chip seasonal-chip px-2.5 py-1 rounded-xl text-[11px] font-medium bg-slate-100/80 text-slate-600 border border-transparent active:scale-95 transition shrink-0 cursor-pointer">+ 2個</button>
+                        <button type="button" data-append=" 1パック" class="append-chip seasonal-chip px-2.5 py-1 rounded-xl text-[11px] font-medium bg-slate-100/80 text-slate-600 border border-transparent active:scale-95 transition shrink-0 cursor-pointer">+ 1パック</button>
+                        <button type="button" data-append=" 1本" class="append-chip seasonal-chip px-2.5 py-1 rounded-xl text-[11px] font-medium bg-slate-100/80 text-slate-600 border border-transparent active:scale-95 transition shrink-0 cursor-pointer">+ 1本</button>
+                        <button type="button" data-append=" 1袋" class="append-chip seasonal-chip px-2.5 py-1 rounded-xl text-[11px] font-medium bg-slate-100/80 text-slate-600 border border-transparent active:scale-95 transition shrink-0 cursor-pointer">+ 1袋</button>
+                    </div>
+                </div>
+
+                <!-- 02. いつまでに買うか（任意） -->
+                <div class="space-y-2.5 pt-4 border-t border-slate-100/90">
+                    <div class="flex items-center justify-between">
+                        <label for="input-deadline" class="flex items-center gap-2 text-xs font-bold tracking-wide text-slate-800">
+                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-display font-extrabold border seasonal-badge">2</span>
+                            <span>いつまでに買うか</span>
+                            <span class="px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-500">任意</span>
+                        </label>
+                        <span id="deadline-preview-badge" class="text-[11px] font-semibold text-slate-400">指定なし</span>
+                    </div>
+
+                    <!-- ピル型クイック期限セレクター -->
+                    <div class="grid grid-cols-4 gap-1.5 bg-slate-100/80 p-1 rounded-2xl">
+                        <button type="button" data-quick-date="clear" class="quick-date-pill py-2 px-2 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-2xs transition cursor-pointer">
+                            指定なし
+                        </button>
+                        <button type="button" data-quick-date="today" class="quick-date-pill py-2 px-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer">
+                            今日
+                        </button>
+                        <button type="button" data-quick-date="tomorrow" class="quick-date-pill py-2 px-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer">
+                            明日
+                        </button>
+                        <button type="button" data-quick-date="weekend" class="quick-date-pill py-2 px-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer">
+                            今週末
+                        </button>
+                    </div>
+
+                    <!-- カレンダー直接指定 -->
+                    <div class="relative flex items-center">
+                        <div class="absolute left-3.5 text-slate-400 pointer-events-none">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="3" y="4" width="18" height="18" rx="2.5"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <input id="input-deadline" type="date"
+                            class="seasonal-input w-full pl-10 pr-3.5 py-2.5 text-sm font-medium bg-slate-50/75 border border-slate-200/80 rounded-xl focus:bg-white focus:outline-none text-slate-700">
+                    </div>
+                </div>
+
+                <!-- 03. 入力者（2人から選択） -->
+                <div class="space-y-2.5 pt-4 border-t border-slate-100/90">
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-xs font-bold tracking-wide text-slate-800">
+                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-display font-extrabold border seasonal-badge">3</span>
+                            <span>入力者</span>
+                        </span>
+                        <button type="button" id="btn-inline-edit-members" class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 hover:text-slate-700 transition cursor-pointer">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            <span>名前を変更</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- 入力者 1 -->
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="input-author" value="member1" checked class="author-radio sr-only">
+                            <div class="author-card relative flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200/70 bg-slate-50/60 hover:bg-white transition-all">
+                                <div id="avatar-member1" class="w-9 h-9 rounded-xl bg-slate-800 text-white font-serifjp font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                                    1
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-xs sm:text-sm font-bold text-slate-800 truncate member1-name-text">メンバー1</div>
+                                    <div class="text-[10px] text-slate-400">入力者 1</div>
+                                </div>
+                                <span class="author-check opacity-0 scale-75 w-4 h-4 rounded-full text-white flex items-center justify-center transition-all shrink-0">
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </label>
+
+                        <!-- 入力者 2 -->
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="input-author" value="member2" class="author-radio sr-only">
+                            <div class="author-card relative flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200/70 bg-slate-50/60 hover:bg-white transition-all">
+                                <div id="avatar-member2" class="w-9 h-9 rounded-xl bg-slate-600 text-white font-serifjp font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                                    2
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-xs sm:text-sm font-bold text-slate-800 truncate member2-name-text">メンバー2</div>
+                                    <div class="text-[10px] text-slate-400">入力者 2</div>
+                                </div>
+                                <span class="author-check opacity-0 scale-75 w-4 h-4 rounded-full text-white flex items-center justify-center transition-all shrink-0">
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 送信アクションボタン -->
+                <div class="pt-2">
+                    <button id="btn-submit-send" type="submit"
+                        class="seasonal-btn-primary group relative w-full overflow-hidden inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl text-sm sm:text-base font-bold text-white disabled:opacity-60 cursor-pointer">
+                        <svg id="submit-icon-send" class="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                        <svg id="submit-icon-spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        <span id="submit-btn-text">スプレッドシートへ送信する</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 直近の送信履歴（端末内控え） -->
+        <section class="bg-white/75 backdrop-blur-xl rounded-[24px] border border-white/90 shadow-xs overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-slate-100/80 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span id="history-dot" class="w-1.5 h-1.5 rounded-full" style="background: var(--accent-main);"></span>
+                    <h2 class="text-xs font-bold text-slate-700">送信履歴（直近の控え）</h2>
+                </div>
+                <button id="btn-clear-logs" type="button" class="text-[11px] font-medium text-slate-400 hover:text-rose-600 transition cursor-pointer">
+                    履歴を消去
+                </button>
+            </div>
+
+            <ul id="sent-log-list" class="divide-y divide-slate-100/80 text-sm">
+                <!-- JavaScriptで描画 -->
+            </ul>
+
+            <div id="empty-log-state" class="py-7 px-4 text-center">
+                <p class="font-serifjp text-xs text-slate-400">送信したアイテムの控えがここに静かに並びます</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Googleスプレッドシート連携・設定モーダル -->
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-[28px] max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-5 my-auto max-h-[92vh] overflow-y-auto">
+            
+            <!-- モーダルヘッダー -->
+            <div class="flex items-start justify-between border-b border-slate-100 pb-3.5">
+                <div>
+                    <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border seasonal-badge mb-1">SHEET SYNC & MEMBERS</span>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">スプレッドシート連携・入力者設定</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">送信先URLの確認や2人の名前の変更ができます</p>
+                </div>
+                <button id="close-settings-modal" type="button" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- URL登録＆入力者名フォーム -->
+            <form id="settings-form" class="space-y-4">
+                <div class="space-y-3 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80">
+                    <div>
+                        <label for="input-webhook-url" class="block text-[11px] font-bold text-slate-700 mb-1">
+                            ウェブアプリURL（送信先） <span class="text-rose-500">*</span>
+                        </label>
+                        <input id="input-webhook-url" type="url" placeholder="https://script.google.com/macros/s/xxxxx/exec"
+                            class="seasonal-input w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none font-mono">
+                    </div>
+
+                    <div>
+                        <label for="input-sheet-url" class="block text-[11px] font-bold text-slate-700 mb-1">
+                            スプレッドシートのURL <span class="font-normal text-slate-400">（「シートを開く」ボタン用）</span>
+                        </label>
+                        <input id="input-sheet-url" type="url" placeholder="https://docs.google.com/spreadsheets/d/xxxxx/edit"
+                            class="seasonal-input w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none font-mono">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 pt-1">
+                        <div>
+                            <label for="input-member1-name" class="block text-[11px] font-bold text-slate-700 mb-1">入力者 1 の名前</label>
+                            <input id="input-member1-name" type="text" required maxlength="15" placeholder="例：自分"
+                                class="seasonal-input w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none">
+                        </div>
+                        <div>
+                            <label for="input-member2-name" class="block text-[11px] font-bold text-slate-700 mb-1">入力者 2 の名前</label>
+                            <input id="input-member2-name" type="text" required maxlength="15" placeholder="例：パートナー"
+                                class="seasonal-input w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 新規シート作成・GASコード折りたたみ案内 -->
+                <details class="group rounded-2xl bg-slate-50/70 border border-slate-200/70 p-3.5 text-xs">
+                    <summary class="font-bold text-slate-700 cursor-pointer flex items-center justify-between list-none">
+                        <span>新しく別のスプレッドシートを作り直す場合</span>
+                        <span class="text-[11px] text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <div class="mt-3 pt-3 border-t border-slate-200/70 space-y-2.5 text-[11px] text-slate-600">
+                        <div class="flex flex-wrap gap-2">
+                            <a href="https://sheets.new" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition">
+                                <span>新規シート作成 ↗</span>
+                            </a>
+                            <button type="button" id="btn-copy-gas" class="px-3 py-1.5 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition cursor-pointer">
+                                受信GASコードをコピー
+                            </button>
+                        </div>
+                        <p class="leading-relaxed">
+                            シートの「拡張機能 ＞ Apps Script」にコードを貼り付けて保存し、「デプロイ ＞ 新しいデプロイ（ウェブアプリ／アクセス：全員）」で発行されたURLを上の欄に貼り付けてください。
+                        </p>
+                    </div>
+                </details>
+
+                <!-- テスト送信＆保存ボタン -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1">
+                    <button type="button" id="btn-test-webhook" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 transition cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        <span>シートへテスト送信</span>
+                    </button>
+
+                    <div class="flex items-center justify-end gap-2">
+                        <button type="button" id="cancel-settings-modal" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer">
+                            閉じる
+                        </button>
+                        <button type="submit" class="seasonal-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer">
+                            設定を保存する
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- カスタム確認モーダル -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl border border-slate-100 space-y-4">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 id="confirm-title" class="text-base font-bold text-slate-900">確認</h3>
+                    <p id="confirm-message" class="text-xs text-slate-600 mt-1 leading-relaxed">この操作を実行してもよろしいですか？</p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button id="confirm-cancel" type="button" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer">
+                    キャンセル
+                </button>
+                <button id="confirm-ok" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 transition cursor-pointer">
+                    実行する
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- スマホのホーム画面（デスクトップ）追加ガイドモーダル -->
+    <div id="home-guide-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 overflow-y-auto">
+        <div class="bg-white rounded-[28px] max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border seasonal-badge mb-1">HOME SCREEN APP</span>
+                    <h3 class="text-base font-extrabold text-slate-900">スマホのデスクトップに保存</h3>
+                    <p class="text-[11px] text-slate-500">専用アイコンからワンタップで起動できます</p>
+                </div>
+                <button id="close-home-guide" type="button" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- デスクトップアイコン実寸プレビュー＆デザイン選択 -->
+            <div class="p-4 rounded-2xl bg-gradient-to-b from-slate-100/90 to-slate-200/60 border border-slate-200/80 flex flex-col items-center space-y-3">
+                <div class="flex flex-col items-center">
+                    <div class="relative p-0.5 rounded-[22px] bg-white/80 shadow-lg">
+                        <img id="preview-home-icon" src="" alt="Shiki アプリアイコン" class="w-[72px] h-[72px] rounded-[20px] block object-cover">
+                    </div>
+                    <span class="mt-1.5 text-[11px] font-bold text-slate-800 tracking-tight">Shiki</span>
+                </div>
+                    <span class="mt-1.5 text-[11px] font-bold text-slate-800 tracking-tight">CartSheet</span>
+                </div>
+
+                <!-- アイコンのカラーデザイン選択 -->
+                <div class="w-full pt-1">
+                    <p class="text-[10px] font-bold text-slate-500 text-center mb-1.5">アイコンの季節デザインを選択（保存前に切り替え可能）</p>
+                    <div class="grid grid-cols-5 gap-1 bg-white/80 p-1 rounded-xl border border-slate-200/70">
+                        <button type="button" data-icon-style="all" class="icon-style-btn py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer">四季彩</button>
+                        <button type="button" data-icon-style="spring" class="icon-style-btn py-1.5 rounded-lg text-[11px] font-serifjp font-semibold transition cursor-pointer">春</button>
+                        <button type="button" data-icon-style="summer" class="icon-style-btn py-1.5 rounded-lg text-[11px] font-serifjp font-semibold transition cursor-pointer">夏</button>
+                        <button type="button" data-icon-style="autumn" class="icon-style-btn py-1.5 rounded-lg text-[11px] font-serifjp font-semibold transition cursor-pointer">秋</button>
+                        <button type="button" data-icon-style="winter" class="icon-style-btn py-1.5 rounded-lg text-[11px] font-serifjp font-semibold transition cursor-pointer">冬</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2.5 text-xs text-slate-700">
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                    <div class="font-bold text-slate-900 flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 rounded bg-slate-800 text-white text-[10px]">iPhone / iPad</span>
+                        <span>Safari をお使いの場合</span>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-600 pl-1">
+                        <li>画面下部（または上部）の<strong>「共有ボタン（□に↑）」</strong>をタップ</li>
+                        <li>メニューを下にスクロールし<strong>「ホーム画面に追加」</strong>を選択</li>
+                        <li>上のプレビューと同じアイコンが表示されたら右上の<strong>「追加」</strong>をタップ</li>
+                    </ol>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                    <div class="font-bold text-slate-900 flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[10px]">Android</span>
+                        <span>Chrome をお使いの場合</span>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-600 pl-1">
+                        <li>画面右上の<strong>「メニュー（⋮）」</strong>をタップ</li>
+                        <li><strong>「ホーム画面に追加」</strong>または<strong>「アプリをインストール」</strong>を選択</li>
+                        <li>確認画面で<strong>「追加」</strong>をタップして完了です</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="pt-1">
+                <button id="ok-home-guide" type="button" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 transition cursor-pointer">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-2 transition-all duration-200">
+        <div class="bg-slate-900/95 backdrop-blur-md text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 whitespace-nowrap border border-white/10">
+            <span id="toast-dot" class="w-2 h-2 rounded-full" style="background: var(--accent-main);"></span>
+            <span id="toast-message">送信しました</span>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Shiki - 春夏秋冬の季節感を纏う、スプレッドシート直結買い物リスト入力アプリ
+         */
+
+        const STORAGE_KEYS = {
+            WEBHOOK_URL: 'cartsheet_webhook_url_v1',
+            SHEET_URL: 'cartsheet_sheet_url_v1',
+            MEMBERS: 'cartsheet_members_v1',
+            LOGS: 'cartsheet_recent_logs_v1',
+            SEASON_MODE: 'cartsheet_season_mode_v1',
+            ICON_STYLE: 'cartsheet_icon_style_v1'
+        };
+
+        // 春夏秋冬のテーマ定義（日本の自然美をイメージしたカラー＆モチーフ）
+        const SEASON_THEMES = {
+            spring: {
+                tag: '春・桜霞',
+                caption: '春の柔らかな風とともに',
+                themeColor: '#f43f5e',
+                vars: {
+                    '--bg-base': '#fdf9fa',
+                    '--orb-1': 'rgba(251, 113, 133, 0.25)',
+                    '--orb-2': 'rgba(244, 114, 182, 0.18)',
+                    '--orb-3': 'rgba(52, 211, 153, 0.16)',
+                    '--accent-main': '#e11d48',
+                    '--accent-deep': '#be123c',
+                    '--accent-soft': 'rgba(244, 63, 94, 0.10)',
+                    '--accent-soft-hover': 'rgba(244, 63, 94, 0.17)',
+                    '--accent-border': 'rgba(244, 63, 94, 0.28)',
+                    '--accent-ring': 'rgba(244, 63, 94, 0.15)',
+                    '--grad-line': 'linear-gradient(90deg, #fda4af 0%, #f43f5e 52%, #34d399 100%)',
+                    '--grad-btn': 'linear-gradient(135deg, #fb7185 0%, #e11d48 60%, #db2777 100%)',
+                    '--btn-shadow': 'rgba(225, 29, 72, 0.26)',
+                    '--card-glow': 'rgba(225, 29, 72, 0.08)',
+                    '--particle-color': '#fb7185'
+                },
+                // 桜の花びらSVG
+                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M12 2C9.5 6 7 9.5 7 13.5C7 16.5 9 19 12 21C15 19 17 16.5 17 13.5C17 9.5 14.5 6 12 2ZM12 5.5C12.8 7.2 13.3 8.8 13.3 10.5C13.3 11.2 12.7 11.8 12 11.8C11.3 11.8 10.7 11.2 10.7 10.5C10.7 8.8 11.2 7.2 12 5.5Z"/></svg>'
+            },
+            summer: {
+                tag: '夏・蒼風',
+                caption: '夏の澄み渡る空と涼風',
+                themeColor: '#0284c7',
+                vars: {
+                    '--bg-base': '#f6fbfd',
+                    '--orb-1': 'rgba(56, 189, 248, 0.26)',
+                    '--orb-2': 'rgba(20, 184, 166, 0.20)',
+                    '--orb-3': 'rgba(253, 224, 71, 0.16)',
+                    '--accent-main': '#0284c7',
+                    '--accent-deep': '#0369a1',
+                    '--accent-soft': 'rgba(14, 165, 233, 0.10)',
+                    '--accent-soft-hover': 'rgba(14, 165, 233, 0.17)',
+                    '--accent-border': 'rgba(14, 165, 233, 0.28)',
+                    '--accent-ring': 'rgba(14, 165, 233, 0.15)',
+                    '--grad-line': 'linear-gradient(90deg, #38bdf8 0%, #06b6d4 50%, #10b981 100%)',
+                    '--grad-btn': 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 55%, #0d9488 100%)',
+                    '--btn-shadow': 'rgba(2, 132, 199, 0.26)',
+                    '--card-glow': 'rgba(2, 132, 199, 0.08)',
+                    '--particle-color': '#38bdf8'
+                },
+                // 夏のきらめき・水滴プリズムSVG
+                svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="w-full h-full"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3" fill="currentColor" fill-opacity="0.3"/></svg>'
+            },
+            autumn: {
+                tag: '秋・紅葉',
+                caption: '秋の深まりと実りの季節',
+                themeColor: '#d97706',
+                vars: {
+                    '--bg-base': '#fcfaf7',
+                    '--orb-1': 'rgba(251, 191, 36, 0.26)',
+                    '--orb-2': 'rgba(249, 115, 22, 0.20)',
+                    '--orb-3': 'rgba(244, 63, 94, 0.14)',
+                    '--accent-main': '#d97706',
+                    '--accent-deep': '#b45309',
+                    '--accent-soft': 'rgba(245, 158, 11, 0.11)',
+                    '--accent-soft-hover': 'rgba(245, 158, 11, 0.18)',
+                    '--accent-border': 'rgba(245, 158, 11, 0.32)',
+                    '--accent-ring': 'rgba(245, 158, 11, 0.16)',
+                    '--grad-line': 'linear-gradient(90deg, #fbbf24 0%, #f97316 50%, #e11d48 100%)',
+                    '--grad-btn': 'linear-gradient(135deg, #f59e0b 0%, #ea580c 55%, #e11d48 100%)',
+                    '--btn-shadow': 'rgba(234, 88, 12, 0.28)',
+                    '--card-glow': 'rgba(217, 119, 6, 0.08)',
+                    '--particle-color': '#ea580c'
+                },
+                // 秋の葉・もみじモチーフSVG
+                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M12 2L14.2 8.2L20.5 7.5L16.5 12.5L19.5 17.5L13.5 16.2L12 22L10.5 16.2L4.5 17.5L7.5 12.5L3.5 7.5L9.8 8.2L12 2Z"/></svg>'
+            },
+            winter: {
+                tag: '冬・雪華',
+                caption: '冬の凛とした静寂のなかで',
+                themeColor: '#4f46e5',
+                vars: {
+                    '--bg-base': '#f7f9fc',
+                    '--orb-1': 'rgba(147, 197, 253, 0.28)',
+                    '--orb-2': 'rgba(129, 140, 248, 0.22)',
+                    '--orb-3': 'rgba(196, 181, 253, 0.18)',
+                    '--accent-main': '#4f46e5',
+                    '--accent-deep': '#3730a3',
+                    '--accent-soft': 'rgba(79, 70, 229, 0.10)',
+                    '--accent-soft-hover': 'rgba(79, 70, 229, 0.17)',
+                    '--accent-border': 'rgba(79, 70, 229, 0.28)',
+                    '--accent-ring': 'rgba(79, 70, 229, 0.15)',
+                    '--grad-line': 'linear-gradient(90deg, #60a5fa 0%, #6366f1 50%, #a855f7 100%)',
+                    '--grad-btn': 'linear-gradient(135deg, #3b82f6 0%, #4f46e5 55%, #312e81 100%)',
+                    '--btn-shadow': 'rgba(79, 70, 229, 0.26)',
+                    '--card-glow': 'rgba(79, 70, 229, 0.08)',
+                    '--particle-color': '#818cf8'
+                },
+                // 雪の結晶SVG
+                svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="w-full h-full"><line x1="12" y1="2" x2="12" y2="22"/><line x1="3.34" y1="7" x2="20.66" y2="17"/><line x1="20.66" y1="7" x2="3.34" y2="17"/><polyline points="9.5 4.5 12 7 14.5 4.5"/><polyline points="9.5 19.5 12 17 14.5 19.5"/></svg>'
+            }
+        };
+
+        // 新規スプレッドシート用 Google Apps Script
+        const GAS_TEMPLATE_CODE = `function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["入力日時", "買いたいもの・数量", "期限（いつまで）", "入力者", "ステータス"]);
+    var headerRange = sheet.getRange(1, 1, 1, 5);
+    headerRange.setBackground("#059669").setFontColor("#ffffff").setFontWeight("bold");
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(1, 140);
+    sheet.setColumnWidth(2, 260);
+    sheet.setColumnWidth(3, 130);
+    sheet.setColumnWidth(4, 110);
+    sheet.setColumnWidth(5, 100);
+  }
+
+  sheet.appendRow([
+    data.timestamp,
+    data.content,
+    data.deadline || "指定なし",
+    data.author,
+    "未購入"
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: "success" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+
+        // アプリ設定状態
+        let appConfig = {
+            webhookUrl: '',
+            sheetUrl: '',
+            memberNames: {
+                member1: 'メンバー1',
+                member2: 'メンバー2'
+            },
+            seasonChoice: 'auto', // 'auto' | 'spring' | 'summer' | 'autumn' | 'winter'
+            iconStyle: 'all'      // 'all' | 'spring' | 'summer' | 'autumn' | 'winter'
+        };
+
+        let sentLogs = [];
+        let pendingConfirmAction = null;
+        let currentManifestBlobUrl = null;
+
+        /**
+         * 洗練された高解像度アプリアイコン（PNG）をCanvasで描画・生成
+         * iOS Safari（apple-touch-icon）やAndroid Chrome（Web App Manifest）で
+         * 確実に高精細なアイコンとして保存されるようにPNG Data URLを返す
+         */
+        function renderAppIconDataUrl(styleKey = 'all', size = 512) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return '';
+
+            const s = size / 512; // 512px基準のスケーリング係数
+
+            // 1. 季節ごとのリッチ・オーロラグラデーション背景（フルブリード：OS側で美しく角丸マスクされる設計）
+            const palettes = {
+                all: ['#f43f5e', '#f59e0b', '#0ea5e9', '#312e81'],
+                spring: ['#fda4af', '#f43f5e', '#be123c', '#881337'],
+                summer: ['#38bdf8', '#0284c7', '#0d9488', '#115e59'],
+                autumn: ['#fbbf24', '#f97316', '#dc2626', '#7c2d12'],
+                winter: ['#93c5fd', '#4f46e5', '#312e81', '#1e1b4b']
+            };
+            const colors = palettes[styleKey] || palettes.all;
+
+            const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+            bgGrad.addColorStop(0.0, colors[0]);
+            bgGrad.addColorStop(0.38, colors[1]);
+            bgGrad.addColorStop(0.75, colors[2]);
+            bgGrad.addColorStop(1.0, colors[3]);
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, size, size);
+
+            // 上部からの柔らかな光彩オーバーレイ
+            const glowGrad = ctx.createRadialGradient(size * 0.25, size * 0.2, 0, size * 0.3, size * 0.25, size * 0.75);
+            glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.32)');
+            glowGrad.addColorStop(0.6, 'rgba(255, 255, 255, 0.06)');
+            glowGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = glowGrad;
+            ctx.fillRect(0, 0, size, size);
+
+            // 2. 和モダンの繊細な同心円リング（静かな波紋・七宝のニュアンス）
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.11)';
+            ctx.lineWidth = 2 * s;
+            [175, 225].forEach(radius => {
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, radius * s, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+            ctx.restore();
+
+            // 3. 中央のグラスモーフィズム・カード台座
+            const cardW = 276 * s;
+            const cardH = 252 * s;
+            const cardX = (size - cardW) / 2;
+            const cardY = (size - cardH) / 2 + 8 * s;
+            const cardR = 54 * s;
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(15, 23, 42, 0.22)';
+            ctx.shadowBlur = 32 * s;
+            ctx.shadowOffsetY = 14 * s;
+
+            const glassGrad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
+            glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.26)');
+            glassGrad.addColorStop(1, 'rgba(255, 255, 255, 0.12)');
+            ctx.fillStyle = glassGrad;
+
+            ctx.beginPath();
+            ctx.roundRect(cardX, cardY, cardW, cardH, cardR);
+            ctx.fill();
+
+            // カードの微細な光沢エッジ
+            ctx.shadowColor = 'transparent';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+            ctx.lineWidth = 2.5 * s;
+            ctx.stroke();
+            ctx.restore();
+
+            // 4. 洗練された幾何学的「シートグリッド×ショッピングバスケット」エンブレム
+            ctx.save();
+            ctx.strokeStyle = '#ffffff';
+            ctx.fillStyle = '#ffffff';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // バスケットの持ち手（美しいアーチ）
+            ctx.lineWidth = 14 * s;
+            ctx.beginPath();
+            ctx.moveTo(196 * s, 210 * s);
+            ctx.lineTo(222 * s, 152 * s);
+            ctx.moveTo(316 * s, 210 * s);
+            ctx.lineTo(290 * s, 152 * s);
+            ctx.stroke();
+
+            // シートを象った角丸グリッドフレーム
+            const gridX = 166 * s;
+            const gridY = 212 * s;
+            const gridW = 180 * s;
+            const gridH = 136 * s;
+            const gridR = 26 * s;
+
+            ctx.lineWidth = 14 * s;
+            ctx.beginPath();
+            ctx.roundRect(gridX, gridY, gridW, gridH, gridR);
+            ctx.stroke();
+
+            // スプレッドシートの水平・垂直セルライン
+            ctx.lineWidth = 10 * s;
+            ctx.beginPath();
+            // 横線
+            ctx.moveTo(gridX + 12 * s, gridY + 56 * s);
+            ctx.lineTo(gridX + gridW - 12 * s, gridY + 56 * s);
+            ctx.moveTo(gridX + 12 * s, gridY + 96 * s);
+            ctx.lineTo(gridX + gridW - 46 * s, gridY + 96 * s);
+            // 縦線（左列チェック欄の仕切り）
+            ctx.moveTo(gridX + 58 * s, gridY + 12 * s);
+            ctx.lineTo(gridX + 58 * s, gridY + gridH - 12 * s);
+            ctx.stroke();
+
+            // 右下の完了チェックアクセント（ピュアホワイトの円形バッジ）
+            const badgeCx = 336 * s;
+            const badgeCy = 334 * s;
+            const badgeR = 34 * s;
+
+            ctx.shadowColor = 'rgba(15, 23, 42, 0.25)';
+            ctx.shadowBlur = 14 * s;
+            ctx.shadowOffsetY = 6 * s;
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(badgeCx, badgeCy, badgeR, 0, Math.PI * 2);
+            ctx.fill();
+
+            // バッジ内のチェックマーク（テーマカラーで描画）
+            ctx.shadowColor = 'transparent';
+            ctx.strokeStyle = colors[1];
+            ctx.lineWidth = 8.5 * s;
+            ctx.beginPath();
+            ctx.moveTo(badgeCx - 13 * s, badgeCy + 1 * s);
+            ctx.lineTo(badgeCx - 3 * s, badgeCy + 11 * s);
+            ctx.lineTo(badgeCx + 15 * s, badgeCy - 9 * s);
+            ctx.stroke();
+
+            ctx.restore();
+
+            // 5. 四季を象徴する上品な光のアクセント（金箔・花びら風のきらめき）
+            const sparkles = [
+                { x: 112, y: 118, r: 5.5, a: 0.75 },
+                { x: 404, y: 126, r: 4.5, a: 0.65 },
+                { x: 118, y: 396, r: 4.0, a: 0.55 },
+                { x: 392, y: 398, r: 5.0, a: 0.70 }
+            ];
+            sparkles.forEach(sp => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${sp.a})`;
+                ctx.beginPath();
+                ctx.arc(sp.x * s, sp.y * s, sp.r * s, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            return canvas.toDataURL('image/png');
+        }
+
+        /**
+         * iOS Safari（apple-touch-icon）、ブラウザタブ（favicon）、
+         * Android Chrome（Web App Manifest）およびプレビューUIへアイコンを一括適用
+         */
+        function updateHomeScreenIcons() {
+            const icon512 = renderAppIconDataUrl(appConfig.iconStyle, 512);
+            const icon180 = renderAppIconDataUrl(appConfig.iconStyle, 180);
+            if (!icon512 || !icon180) return;
+
+            // iOS「ホーム画面に追加」用アイコン
+            const appleIconLink = document.getElementById('dynamic-apple-icon');
+            if (appleIconLink) appleIconLink.href = icon180;
+
+            // ブラウザタブ・ブックマーク用ファビコン
+            const faviconLink = document.getElementById('dynamic-favicon');
+            if (faviconLink) {
+                faviconLink.type = 'image/png';
+                faviconLink.href = icon180;
+            }
+
+            // ガイドモーダル内の実寸プレビュー更新
+            const previewImg = document.getElementById('preview-home-icon');
+            if (previewImg) previewImg.src = icon180;
+
+            // アイコンスタイル選択ボタンのアクティブ状態更新
+            document.querySelectorAll('.icon-style-btn').forEach(btn => {
+                const st = btn.dataset.iconStyle;
+                if (st === appConfig.iconStyle) {
+                    btn.className = 'icon-style-btn py-1.5 rounded-lg text-[11px] font-bold bg-slate-900 text-white shadow-2xs transition cursor-pointer';
+                } else {
+                    btn.className = 'icon-style-btn py-1.5 rounded-lg text-[11px] font-serifjp font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+                }
+            });
+
+            // Android Chrome用 Web App Manifest の動的生成
+            try {
+                const manifestObj = {
+                    name: 'Shiki - 買い物リスト入力',
+                    short_name: 'Shiki',
+                    start_url: '.',
+                    display: 'standalone',
+                    background_color: '#fcfaf7',
+                    theme_color: document.getElementById('meta-theme-color')?.getAttribute('content') || '#e11d48',
+                    icons: [
+                        {
+                            src: icon180,
+                            sizes: '180x180',
+                            type: 'image/png',
+                            purpose: 'any maskable'
+                        },
+                        {
+                            src: icon512,
+                            sizes: '512x512',
+                            type: 'image/png',
+                            purpose: 'any maskable'
+                        }
+                    ]
+                };
+
+                if (currentManifestBlobUrl) {
+                    URL.revokeObjectURL(currentManifestBlobUrl);
+                }
+                const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+                currentManifestBlobUrl = URL.createObjectURL(blob);
+                const manifestLink = document.getElementById('dynamic-manifest');
+                if (manifestLink) manifestLink.href = currentManifestBlobUrl;
+            } catch (err) {
+                console.warn('Manifest update skipped:', err);
+            }
+        }
+
+        // 現在の月から季節を判定（3-5:春, 6-8:夏, 9-11:秋, 12-2:冬）
+        function detectCurrentSeason() {
+            const month = new Date().getMonth() + 1;
+            if (month >= 3 && month <= 5) return 'spring';
+            if (month >= 6 && month <= 8) return 'summer';
+            if (month >= 9 && month <= 11) return 'autumn';
+            return 'winter';
+        }
+
+        // 四季テーマの適用とパーティクル生成
+        function applySeasonTheme() {
+            const activeSeason = appConfig.seasonChoice === 'auto'
+                ? detectCurrentSeason()
+                : appConfig.seasonChoice;
+
+            const theme = SEASON_THEMES[activeSeason] || SEASON_THEMES.autumn;
+            const root = document.documentElement;
+
+            Object.entries(theme.vars).forEach(([key, val]) => {
+                root.style.setProperty(key, val);
+            });
+
+            // ブラウザのテーマカラーも季節に合わせる
+            const metaTheme = document.getElementById('meta-theme-color');
+            if (metaTheme) metaTheme.setAttribute('content', theme.themeColor);
+
+            // ヘッダーの季節タグ・詩的キャプション更新
+            document.getElementById('season-pill-tag').textContent = theme.tag;
+            document.getElementById('season-poetic-caption').textContent = theme.caption;
+
+            // スイッチャーボタンの選択状態更新
+            document.querySelectorAll('.season-switch-btn').forEach(btn => {
+                const choice = btn.dataset.seasonChoice;
+                if (choice === appConfig.seasonChoice) {
+                    btn.className = 'season-switch-btn px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-900 text-white shadow-2xs transition cursor-pointer';
+                } else {
+                    btn.className = 'season-switch-btn px-2.5 py-1 rounded-xl text-[11px] font-serifjp font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+                }
+            });
+
+            // 背景に舞う繊細な季節パーティクルを生成
+            const layer = document.getElementById('seasonal-particles-layer');
+            layer.innerHTML = '';
+            const count = 8;
+
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = activeSeason === 'summer'
+                    ? 'seasonal-particle summer-mode'
+                    : 'seasonal-particle';
+
+                const size = 12 + (i % 4) * 4; // 12px〜24pxの控えめなサイズ
+                const leftPct = 6 + (i * 12.5) % 88;
+                const durationSec = activeSeason === 'summer' ? (5 + (i % 4) * 1.5) : (14 + (i % 5) * 3.5);
+                const delaySec = -(i * 2.3);
+
+                el.style.width = `${size}px`;
+                el.style.height = `${size}px`;
+                el.style.left = `${leftPct}%`;
+                if (activeSeason === 'summer') {
+                    el.style.top = `${12 + (i * 11) % 75}%`;
+                }
+                el.style.animationDuration = `${durationSec}s`;
+                el.style.animationDelay = `${delaySec}s`;
+                el.innerHTML = theme.svg;
+
+                layer.appendChild(el);
+            }
+        }
+
+        // ストレージ読み込み
+        function loadState() {
+            try {
+                const savedWebhook = localStorage.getItem(STORAGE_KEYS.WEBHOOK_URL);
+                const savedSheet = localStorage.getItem(STORAGE_KEYS.SHEET_URL);
+                const savedMembers = localStorage.getItem(STORAGE_KEYS.MEMBERS);
+                const savedLogs = localStorage.getItem(STORAGE_KEYS.LOGS);
+                const savedSeason = localStorage.getItem(STORAGE_KEYS.SEASON_MODE);
+                const savedIconStyle = localStorage.getItem(STORAGE_KEYS.ICON_STYLE);
+
+                if (savedWebhook) appConfig.webhookUrl = savedWebhook;
+                if (savedSheet) appConfig.sheetUrl = savedSheet;
+                if (savedSeason && ['auto', 'spring', 'summer', 'autumn', 'winter'].includes(savedSeason)) {
+                    appConfig.seasonChoice = savedSeason;
+                }
+                if (savedIconStyle && ['all', 'spring', 'summer', 'autumn', 'winter'].includes(savedIconStyle)) {
+                    appConfig.iconStyle = savedIconStyle;
+                }
+                if (savedMembers) {
+                    const parsed = JSON.parse(savedMembers);
+                    if (parsed.member1) appConfig.memberNames.member1 = parsed.member1;
+                    if (parsed.member2) appConfig.memberNames.member2 = parsed.member2;
+                }
+                if (savedLogs) {
+                    sentLogs = JSON.parse(savedLogs);
+                }
+            } catch (err) {
+                console.warn('Storage load skipped:', err);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.WEBHOOK_URL, appConfig.webhookUrl);
+                localStorage.setItem(STORAGE_KEYS.SHEET_URL, appConfig.sheetUrl);
+                localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(appConfig.memberNames));
+                localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(sentLogs.slice(0, 20)));
+                localStorage.setItem(STORAGE_KEYS.SEASON_MODE, appConfig.seasonChoice);
+                localStorage.setItem(STORAGE_KEYS.ICON_STYLE, appConfig.iconStyle);
+            } catch (err) {
+                console.warn('Storage save skipped:', err);
+            }
+        }
+
+        // 日付ユーティリティ
+        function getLocalDateString(offsetDays = 0) {
+            const d = new Date();
+            d.setDate(d.getDate() + offsetDays);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function getWeekendDateString() {
+            const d = new Date();
+            const dayOfWeek = d.getDay();
+            const diffToSat = dayOfWeek === 6 ? 0 : (6 - dayOfWeek);
+            return getLocalDateString(diffToSat);
+        }
+
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            return `${y}/${m}/${d} ${hh}:${mm}`;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // トースト表示
+        let toastTimer = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('opacity-0', 'translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-2');
+            }, 2800);
+        }
+
+        // 確認モーダル
+        function openConfirmModal(title, message, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            pendingConfirmAction = onConfirm;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            pendingConfirmAction = null;
+        }
+
+        // 期限ピルとプレビュー表示の同期
+        const inputDeadline = document.getElementById('input-deadline');
+        const deadlinePreviewBadge = document.getElementById('deadline-preview-badge');
+        const quickDatePills = document.querySelectorAll('.quick-date-pill');
+
+        function updateDeadlineUI() {
+            const val = inputDeadline.value;
+            const todayStr = getLocalDateString(0);
+            const tomorrowStr = getLocalDateString(1);
+            const weekendStr = getWeekendDateString();
+
+            quickDatePills.forEach(pill => {
+                const mode = pill.dataset.quickDate;
+                let isActive = false;
+                if (!val && mode === 'clear') isActive = true;
+                else if (val === todayStr && mode === 'today') isActive = true;
+                else if (val === tomorrowStr && mode === 'tomorrow') isActive = true;
+                else if (val === weekendStr && mode === 'weekend' && val !== todayStr && val !== tomorrowStr) isActive = true;
+
+                if (isActive) {
+                    pill.className = 'quick-date-pill py-2 px-2 rounded-xl text-xs font-bold bg-white text-slate-900 shadow-2xs transition cursor-pointer';
+                } else {
+                    pill.className = 'quick-date-pill py-2 px-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+                }
+            });
+
+            if (!val) {
+                deadlinePreviewBadge.textContent = '指定なし';
+                deadlinePreviewBadge.className = 'text-[11px] font-medium text-slate-400';
+            } else if (val === todayStr) {
+                deadlinePreviewBadge.textContent = `今日まで (${val.slice(5).replace('-', '/')})`;
+                deadlinePreviewBadge.className = 'text-[11px] font-bold text-rose-600';
+            } else if (val === tomorrowStr) {
+                deadlinePreviewBadge.textContent = `明日まで (${val.slice(5).replace('-', '/')})`;
+                deadlinePreviewBadge.className = 'text-[11px] font-bold text-amber-600';
+            } else {
+                deadlinePreviewBadge.textContent = `${val.replace(/-/g, '/')} まで`;
+                deadlinePreviewBadge.className = 'text-[11px] font-bold text-slate-700';
+            }
+        }
+
+        quickDatePills.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.quickDate;
+                if (mode === 'today') inputDeadline.value = getLocalDateString(0);
+                else if (mode === 'tomorrow') inputDeadline.value = getLocalDateString(1);
+                else if (mode === 'weekend') inputDeadline.value = getWeekendDateString();
+                else inputDeadline.value = '';
+                updateDeadlineUI();
+            });
+        });
+
+        inputDeadline.addEventListener('change', updateDeadlineUI);
+
+        // 季節スイッチャーイベント
+        document.querySelectorAll('.season-switch-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                appConfig.seasonChoice = btn.dataset.seasonChoice;
+                saveState();
+                applySeasonTheme();
+            });
+        });
+
+        // 全体UI描画
+        function renderUI() {
+            const m1 = appConfig.memberNames.member1;
+            const m2 = appConfig.memberNames.member2;
+
+            document.querySelectorAll('.member1-name-text').forEach(el => el.textContent = m1);
+            document.querySelectorAll('.member2-name-text').forEach(el => el.textContent = m2);
+
+            document.getElementById('avatar-member1').textContent = Array.from(m1)[0] || '1';
+            document.getElementById('avatar-member2').textContent = Array.from(m2)[0] || '2';
+
+            // 連携ステータス更新
+            const isConnected = Boolean(appConfig.webhookUrl);
+            const headerDot = document.getElementById('header-conn-dot');
+            const bannerDot = document.getElementById('banner-dot');
+            const bannerLabel = document.getElementById('banner-btn-label');
+            const linkOpenSheet = document.getElementById('link-open-sheet');
+            const btnSetupNow = document.getElementById('btn-setup-now');
+
+            if (isConnected) {
+                headerDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                bannerDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                bannerLabel.textContent = 'シート連携中';
+            } else {
+                headerDot.className = 'w-2 h-2 rounded-full bg-amber-400';
+                bannerDot.className = 'w-2 h-2 rounded-full bg-amber-400';
+                bannerLabel.textContent = 'シート未連携';
+            }
+
+            if (appConfig.sheetUrl) {
+                linkOpenSheet.href = appConfig.sheetUrl;
+                linkOpenSheet.classList.remove('hidden');
+                btnSetupNow.classList.add('hidden');
+            } else {
+                linkOpenSheet.classList.add('hidden');
+                btnSetupNow.classList.remove('hidden');
+            }
+
+            // 送信履歴リスト描画
+            const logList = document.getElementById('sent-log-list');
+            const emptyLogState = document.getElementById('empty-log-state');
+            logList.innerHTML = '';
+
+            if (sentLogs.length === 0) {
+                emptyLogState.classList.remove('hidden');
+            } else {
+                emptyLogState.classList.add('hidden');
+                sentLogs.forEach(log => {
+                    const li = document.createElement('li');
+                    li.className = 'px-5 py-3.5 flex items-center justify-between gap-3 hover:bg-white/60 transition';
+
+                    const authorBadgeClass = log.authorKey === 'member2'
+                        ? 'bg-slate-100 text-slate-700 border border-slate-200/80'
+                        : 'border seasonal-badge';
+
+                    const statusBadge = log.synced
+                        ? '<span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>送信済</span>'
+                        : '<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full">未接続控え</span>';
+
+                    li.innerHTML = `
+                        <div class="min-w-0 space-y-1">
+                            <div class="font-bold text-slate-800 text-sm truncate">${escapeHtml(log.content)}</div>
+                            <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
+                                <span class="px-2 py-0.5 rounded-md font-bold ${authorBadgeClass}">${escapeHtml(log.authorName)}</span>
+                                ${log.deadline ? `<span class="bg-slate-100/90 text-slate-600 px-2 py-0.5 rounded-md font-medium">期限: ${escapeHtml(log.deadline)}</span>` : ''}
+                                <span class="text-slate-400">${escapeHtml(log.shortTime)}</span>
+                            </div>
+                        </div>
+                        <div class="shrink-0">
+                            ${statusBadge}
+                        </div>
+                    `;
+                    logList.appendChild(li);
+                });
+            }
+        }
+
+        // 入力フィールド操作と補助チップ
+        const inputContent = document.getElementById('input-content');
+        const btnClearText = document.getElementById('btn-clear-text');
+        const charIndicator = document.getElementById('char-indicator');
+
+        function updateInputControls() {
+            const hasText = inputContent.value.trim().length > 0;
+            if (hasText) {
+                btnClearText.classList.remove('hidden');
+                charIndicator.textContent = '送信準備OK';
+                charIndicator.className = 'text-[11px] font-bold text-slate-700';
+            } else {
+                btnClearText.classList.add('hidden');
+                charIndicator.textContent = '自由記述';
+                charIndicator.className = 'text-[11px] font-medium text-slate-400';
+            }
+        }
+
+        inputContent.addEventListener('input', updateInputControls);
+
+        btnClearText.addEventListener('click', () => {
+            inputContent.value = '';
+            updateInputControls();
+            inputContent.focus();
+        });
+
+        document.querySelectorAll('.append-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const appendStr = chip.dataset.append || '';
+                const current = inputContent.value;
+                inputContent.value = current ? `${current.trim()}${appendStr}` : appendStr.trim();
+                updateInputControls();
+                inputContent.focus();
+            });
+        });
+
+        // スプレッドシート送信処理
+        const sendItemForm = document.getElementById('send-item-form');
+        const btnSubmitSend = document.getElementById('btn-submit-send');
+        const submitIconSend = document.getElementById('submit-icon-send');
+        const submitIconSpinner = document.getElementById('submit-icon-spinner');
+        const submitBtnText = document.getElementById('submit-btn-text');
+
+        function setSendingState(isSending) {
+            btnSubmitSend.disabled = isSending;
+            if (isSending) {
+                submitIconSend.classList.add('hidden');
+                submitIconSpinner.classList.remove('hidden');
+                submitBtnText.textContent = 'スプレッドシートへ送信中...';
+            } else {
+                submitIconSend.classList.remove('hidden');
+                submitIconSpinner.classList.add('hidden');
+                submitBtnText.textContent = 'スプレッドシートへ送信する';
+            }
+        }
+
+        async function postToSpreadsheet(payload) {
+            await fetch(appConfig.webhookUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        sendItemForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = inputContent.value.trim();
+            if (!content) return;
+
+            const deadline = inputDeadline.value || '';
+            const selectedRadio = document.querySelector('input[name="input-author"]:checked');
+            const authorKey = selectedRadio ? selectedRadio.value : 'member1';
+            const authorName = appConfig.memberNames[authorKey] || authorKey;
+            const timestamp = getFormattedTimestamp();
+
+            const payload = {
+                timestamp,
+                content,
+                deadline,
+                author: authorName
+            };
+
+            setSendingState(true);
+            let isSynced = false;
+
+            try {
+                if (appConfig.webhookUrl) {
+                    await postToSpreadsheet(payload);
+                    isSynced = true;
+                }
+            } catch (err) {
+                console.error('Spreadsheet send error:', err);
+                showToast('送信中に通信エラーが発生しました');
+                setSendingState(false);
+                return;
+            }
+
+            const now = new Date();
+            const shortTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            sentLogs.unshift({
+                id: String(Date.now()),
+                content,
+                deadline,
+                authorKey,
+                authorName,
+                shortTime,
+                synced: isSynced
+            });
+
+            saveState();
+            renderUI();
+
+            inputContent.value = '';
+            inputDeadline.value = '';
+            updateInputControls();
+            updateDeadlineUI();
+            setSendingState(false);
+            inputContent.focus();
+
+            if (isSynced) {
+                showToast(`「${content}」をスプレッドシートへ送信しました`);
+            } else {
+                showToast(`「${content}」を記録しました（連携設定でシートへ自動転送）`);
+            }
+        });
+
+        // 設定モーダル制御
+        const settingsModal = document.getElementById('settings-modal');
+        const inputWebhookUrl = document.getElementById('input-webhook-url');
+        const inputSheetUrl = document.getElementById('input-sheet-url');
+        const inputMember1Name = document.getElementById('input-member1-name');
+        const inputMember2Name = document.getElementById('input-member2-name');
+
+        function openSettingsModal() {
+            inputWebhookUrl.value = appConfig.webhookUrl;
+            inputSheetUrl.value = appConfig.sheetUrl;
+            inputMember1Name.value = appConfig.memberNames.member1;
+            inputMember2Name.value = appConfig.memberNames.member2;
+            settingsModal.classList.remove('hidden');
+            settingsModal.classList.add('flex');
+        }
+
+        function closeSettingsModal() {
+            settingsModal.classList.add('hidden');
+            settingsModal.classList.remove('flex');
+        }
+
+        document.getElementById('btn-open-settings').addEventListener('click', openSettingsModal);
+        document.getElementById('btn-setup-now').addEventListener('click', openSettingsModal);
+        document.getElementById('btn-inline-edit-members').addEventListener('click', openSettingsModal);
+        document.getElementById('close-settings-modal').addEventListener('click', closeSettingsModal);
+        document.getElementById('cancel-settings-modal').addEventListener('click', closeSettingsModal);
+
+        document.getElementById('settings-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            appConfig.webhookUrl = inputWebhookUrl.value.trim();
+            appConfig.sheetUrl = inputSheetUrl.value.trim();
+
+            const m1 = inputMember1Name.value.trim();
+            const m2 = inputMember2Name.value.trim();
+            if (m1) appConfig.memberNames.member1 = m1;
+            if (m2) appConfig.memberNames.member2 = m2;
+
+            saveState();
+            renderUI();
+            closeSettingsModal();
+            showToast('設定を保存しました');
+        });
+
+        // テスト送信
+        document.getElementById('btn-test-webhook').addEventListener('click', async () => {
+            const url = inputWebhookUrl.value.trim();
+            if (!url) {
+                showToast('先に「ウェブアプリURL」を入力してください');
+                inputWebhookUrl.focus();
+                return;
+            }
+
+            const btnTest = document.getElementById('btn-test-webhook');
+            btnTest.disabled = true;
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        timestamp: getFormattedTimestamp(),
+                        content: '【連携テスト】Shikiからのテスト送信',
+                        deadline: getLocalDateString(0),
+                        author: inputMember1Name.value.trim() || appConfig.memberNames.member1
+                    })
+                });
+                showToast('テストデータを送信しました！シートを確認してください');
+            } catch (err) {
+                showToast('テスト送信に失敗しました。URLを確認してください');
+            } finally {
+                btnTest.disabled = false;
+            }
+        });
+
+        // GASコードコピー
+        document.getElementById('btn-copy-gas').addEventListener('click', () => {
+            const textArea = document.createElement('textarea');
+            textArea.value = GAS_TEMPLATE_CODE;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('受信プログラム（GASコード）をコピーしました');
+            } catch (err) {
+                showToast('コピーに失敗しました');
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        });
+
+        // 履歴消去
+        document.getElementById('btn-clear-logs').addEventListener('click', () => {
+            if (sentLogs.length === 0) return;
+            openConfirmModal(
+                '送信履歴の消去',
+                'この端末上の送信控えを消去しますか？（Googleスプレッドシートのデータは消えません）',
+                () => {
+                    sentLogs = [];
+                    saveState();
+                    renderUI();
+                    showToast('送信履歴を消去しました');
+                }
+            );
+        });
+
+        // モーダル閉じる処理
+        document.getElementById('confirm-cancel').addEventListener('click', closeConfirmModal);
+        document.getElementById('confirm-ok').addEventListener('click', () => {
+            if (typeof pendingConfirmAction === 'function') {
+                pendingConfirmAction();
+            }
+            closeConfirmModal();
+        });
+
+        const homeGuideModal = document.getElementById('home-guide-modal');
+        document.getElementById('btn-home-guide').addEventListener('click', () => {
+            updateHomeScreenIcons();
+            homeGuideModal.classList.remove('hidden');
+            homeGuideModal.classList.add('flex');
+        });
+        const closeHomeGuide = () => {
+            homeGuideModal.classList.add('hidden');
+            homeGuideModal.classList.remove('flex');
+        };
+        document.getElementById('close-home-guide').addEventListener('click', closeHomeGuide);
+        document.getElementById('ok-home-guide').addEventListener('click', closeHomeGuide);
+
+        // ホーム画面アイコンのデザイン切替イベント
+        document.querySelectorAll('.icon-style-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                appConfig.iconStyle = btn.dataset.iconStyle || 'all';
+                saveState();
+                updateHomeScreenIcons();
+                showToast('デスクトップ用アイコンのデザインを切り替えました');
+            });
+        });
+
+        // 初期化
+        loadState();
+        applySeasonTheme();
+        updateHomeScreenIcons();
+        updateInputControls();
+        updateDeadlineUI();
+        renderUI();
+    </script>
+</body>
+</html>
