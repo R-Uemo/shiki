@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Shiki">
-    <meta name="theme-color" id="meta-theme-color" content="#e11d48">
+    <meta name="theme-color" id="meta-theme-color" content="#d97706">
     <title>Shiki - 四季の買い物リスト</title>
 
     <!-- Google Fonts: Inter, Noto Sans JP & Shippori Mincho -->
@@ -17,24 +17,24 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- 動的アプリアイコン & Web App Manifest 用プレースホルダ -->
+    <!-- 動的アプリアイコン & Web App Manifest -->
     <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="">
     <link id="favicon-icon" rel="icon" type="image/png" href="">
     <link id="app-manifest" rel="manifest" href="">
 
     <style>
         :root {
-            --bg-gradient-1: rgba(255, 228, 230, 0.72);
-            --bg-gradient-2: rgba(254, 243, 199, 0.55);
-            --bg-base: #fcfaf7;
-            --accent-primary: #e11d48;
-            --accent-secondary: #fb7185;
-            --accent-soft: #fff1f2;
-            --accent-border: #fecdd3;
-            --accent-text: #be123c;
-            --accent-ring: rgba(225, 29, 72, 0.16);
-            --btn-gradient: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-            --btn-shadow: 0 10px 24px -6px rgba(225, 29, 72, 0.36);
+            --bg-gradient-1: rgba(254, 243, 199, 0.82);
+            --bg-gradient-2: rgba(255, 237, 213, 0.68);
+            --bg-base: #fcfaf6;
+            --accent-primary: #d97706;
+            --accent-secondary: #f59e0b;
+            --accent-soft: #fffbeb;
+            --accent-border: #fde68a;
+            --accent-text: #b45309;
+            --accent-ring: rgba(217, 119, 6, 0.16);
+            --btn-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --btn-shadow: 0 10px 24px -6px rgba(217, 119, 6, 0.34);
         }
 
         body {
@@ -160,6 +160,12 @@
             color: #ffffff;
         }
 
+        /* 送信完了時のボタンフィードバック */
+        .btn-sent-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            box-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.38) !important;
+        }
+
         /* カスタムスクロールバー非表示（横スクロール用） */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -170,7 +176,7 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-rose-100 selection:text-rose-900">
+<body class="antialiased selection:bg-amber-100 selection:text-amber-900">
 
     <!-- 季節の背景＆浮遊モチーフ -->
     <div class="seasonal-backdrop"></div>
@@ -267,18 +273,19 @@
 
                     <!-- クイック数量補助チップ -->
                     <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2">
-                        <button type="button" data-append=" 1個" class="quick-append seasonal-chip shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1個</button>
-                        <button type="button" data-append=" 2個" class="quick-append seasonal-chip shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 2個</button>
-                        <button type="button" data-append=" 1パック" class="quick-append seasonal-chip shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1パック</button>
-                        <button type="button" data-append=" 1袋" class="quick-append seasonal-chip shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1袋</button>
-                        <button type="button" data-append=" 1本" class="quick-append seasonal-chip shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1本</button>
+                        <button type="button" data-append="、" class="quick-append seasonal-chip shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">、区切り</button>
+                        <button type="button" data-append=" 1個" class="quick-append seasonal-chip shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1個</button>
+                        <button type="button" data-append=" 2個" class="quick-append seasonal-chip shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 2個</button>
+                        <button type="button" data-append=" 1パック" class="quick-append seasonal-chip shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1パック</button>
+                        <button type="button" data-append=" 1袋" class="quick-append seasonal-chip shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1袋</button>
+                        <button type="button" data-append=" 1本" class="quick-append seasonal-chip shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-slate-600 bg-white/80 border border-slate-200/80 transition cursor-pointer">+ 1本</button>
                     </div>
                 </div>
 
                 <!-- ② いつまでに買うか（任意） -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="flex items-center gap-2 text-xs font-bold text-slate-800">
+                        <label for="input-deadline" class="flex items-center gap-2 text-xs font-bold text-slate-800">
                             <span class="w-5 h-5 rounded-full seasonal-top-bar text-white text-[11px] flex items-center justify-center font-bold">2</span>
                             <span>いつまでに買うか</span>
                         </label>
@@ -292,9 +299,22 @@
                         <button type="button" data-preset="weekend" class="deadline-preset py-2 px-1 rounded-xl text-xs border border-slate-200/90 bg-white/80 text-slate-600 transition cursor-pointer">今週末</button>
                     </div>
 
-                    <div class="relative">
-                        <input id="input-deadline" type="date"
-                            class="seasonal-input w-full px-3.5 py-2 text-xs bg-white/80 border border-slate-200/90 rounded-xl text-slate-700 focus:bg-white focus:outline-none">
+                    <!-- iOS / Android 共通で美しく見えるカスタムカレンダーピッカー -->
+                    <div class="relative group">
+                        <div id="custom-date-trigger" class="w-full px-3.5 py-2.5 text-xs bg-white/85 group-hover:bg-white border border-slate-200/90 rounded-xl text-slate-600 flex items-center justify-between transition">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <span id="custom-date-label">カレンダーから日付を指定</span>
+                            </span>
+                            <span class="text-[10px] text-slate-400 font-medium">変更 ›</span>
+                        </div>
+                        <input id="input-deadline" type="date" aria-label="いつまでに買うか日付を選択"
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                     </div>
                 </div>
 
@@ -339,7 +359,7 @@
                 <div class="pt-1">
                     <button type="submit" id="btn-submit"
                         class="seasonal-btn-primary w-full py-3.5 px-5 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <svg id="btn-submit-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
                         <span id="btn-submit-text">スプレッドシートへ送信する</span>
@@ -378,7 +398,7 @@
     <!-- ========================================================= -->
     <!-- モーダル1：入力者名（2人分）の編集モーダル -->
     <!-- ========================================================= -->
-    <div id="member-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+    <div id="member-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
             <h3 class="text-base font-bold text-slate-900 mb-1">入力者の名前を設定</h3>
             <p class="text-xs text-slate-500 mb-4">2人分の表示名を設定できます（後からいつでも変更できます）。</p>
@@ -410,7 +430,7 @@
     <!-- ========================================================= -->
     <!-- モーダル2：ホーム画面追加＆アイコンプレビューモーダル -->
     <!-- ========================================================= -->
-    <div id="pwa-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs overflow-y-auto">
+    <div id="pwa-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs overflow-y-auto">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 my-auto">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-base font-bold text-slate-900">ホーム画面にアプリとして保存</h3>
@@ -460,7 +480,7 @@
     <!-- ========================================================= -->
     <!-- モーダル3：隠し連携設定＆家族共有モーダル（Shikiロゴ3回タップで起動） -->
     <!-- ========================================================= -->
-    <div id="secret-url-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/45 backdrop-blur-xs overflow-y-auto">
+    <div id="secret-url-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/45 backdrop-blur-xs overflow-y-auto">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 my-auto">
             <div class="flex items-center justify-between mb-1">
                 <h3 class="text-base font-bold text-slate-900">スプレッドシート連携・家族共有</h3>
@@ -656,9 +676,11 @@
         };
 
         let sentLogs = [];
+        let currentManifestBlobUrl = null;
+        let toastTimer = null;
 
-        // 現在の月（日本基準）から季節を自動判定
-        function detectCurrentSeason() {
+        // 現在の月から季節を自動判定
+        function getAutoSeason() {
             const month = new Date().getMonth() + 1;
             if (month >= 3 && month <= 5) return 'spring';
             if (month >= 6 && month <= 8) return 'summer';
@@ -667,10 +689,45 @@
         }
 
         function getActiveSeasonKey() {
-            return appConfig.seasonChoice === 'auto' ? detectCurrentSeason() : appConfig.seasonChoice;
+            return appConfig.seasonChoice === 'auto' ? getAutoSeason() : appConfig.seasonChoice;
         }
 
-        // 季節テーマをCSS変数とUIに適用
+        // 季節モチーフパーティクル描画
+        function renderParticles(theme) {
+            const container = document.getElementById('seasonal-particles');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const count = 12;
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'particle';
+                const left = Math.round((i * 8.3) + (Math.random() * 5));
+                const size = 10 + Math.round(Math.random() * 8);
+                const duration = 12 + Math.round(Math.random() * 10);
+                const delay = -(Math.random() * 14).toFixed(1);
+
+                el.style.left = `${Math.min(left, 96)}%`;
+                el.style.width = `${size}px`;
+                el.style.height = `${size}px`;
+                el.style.animationDuration = `${duration}s`;
+                el.style.animationDelay = `${delay}s`;
+
+                if (theme.particleShape === 'petal') {
+                    el.innerHTML = `<svg viewBox="0 0 24 24" fill="${theme.particleColor}"><path d="M12 2C8 6 6 11 12 20C18 11 16 6 12 2Z"/></svg>`;
+                } else if (theme.particleShape === 'leaf') {
+                    el.innerHTML = `<svg viewBox="0 0 24 24" fill="${theme.particleColor}"><path d="M17 3C11 3 5 8 5 15C5 17 6 19 6 19C6 19 8 20 10 20C17 20 21 14 21 8C21 5 19 3 17 3Z"/></svg>`;
+                } else if (theme.particleShape === 'snow') {
+                    el.innerHTML = `<svg viewBox="0 0 24 24" stroke="${theme.particleColor}" stroke-width="2" fill="none"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>`;
+                } else {
+                    el.innerHTML = `<svg viewBox="0 0 24 24" fill="${theme.particleColor}"><circle cx="12" cy="12" r="5"/></svg>`;
+                }
+
+                container.appendChild(el);
+            }
+        }
+
+        // 季節テーマをUI全体に適用
         function applySeasonTheme() {
             const seasonKey = getActiveSeasonKey();
             const theme = SEASON_THEMES[seasonKey] || SEASON_THEMES.autumn;
@@ -702,202 +759,147 @@
             const caption = document.getElementById('season-caption');
             if (caption) caption.textContent = theme.caption;
 
-            // 季節切替タブのハイライト更新
-            document.querySelectorAll('.season-tab').forEach((btn) => {
-                const isSelected = btn.dataset.season === appConfig.seasonChoice;
-                if (isSelected) {
-                    btn.style.backgroundColor = theme.primary;
-                    btn.style.color = '#ffffff';
-                    btn.classList.add('font-bold', 'shadow-2xs');
+            document.querySelectorAll('.season-tab').forEach((tab) => {
+                if (tab.dataset.season === appConfig.seasonChoice) {
+                    tab.style.background = theme.gradient;
+                    tab.style.color = '#ffffff';
+                    tab.style.fontWeight = '700';
                 } else {
-                    btn.style.backgroundColor = 'transparent';
-                    btn.style.color = '#64748b';
-                    btn.classList.remove('font-bold', 'shadow-2xs');
+                    tab.style.background = 'transparent';
+                    tab.style.color = '#64748b';
+                    tab.style.fontWeight = '500';
                 }
             });
 
-            renderSeasonalParticles(theme);
+            renderParticles(theme);
         }
 
-        // 季節の浮遊モチーフ生成
-        function renderSeasonalParticles(theme) {
-            const container = document.getElementById('seasonal-particles');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const count = 10;
-            for (let i = 0; i < count; i++) {
-                const el = document.createElement('div');
-                el.className = 'particle';
-                const left = (i * 10) + Math.random() * 6;
-                const duration = 14 + Math.random() * 10;
-                const delay = -(Math.random() * 18);
-                const size = 10 + Math.random() * 8;
-
-                el.style.left = `${left}%`;
-                el.style.animationDuration = `${duration}s`;
-                el.style.animationDelay = `${delay}s`;
-                el.style.color = theme.particleColor;
-
-                if (theme.particleShape === 'petal') {
-                    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 6 6 10 8 15c1.5 3.5 6.5 3.5 8 0 2-5-1-9-4-13z"/></svg>`;
-                } else if (theme.particleShape === 'leaf') {
-                    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3C11 3 5 8 5 15c0 2 1 4 3 5 1-3 3-6 6-8-2 3-3 6-3 9 6 0 11-6 11-12 0-3-2-6-5-6z"/></svg>`;
-                } else if (theme.particleShape === 'snow') {
-                    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1"/></svg>`;
-                } else {
-                    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>`;
-                }
-
-                container.appendChild(el);
-            }
-        }
-
-        // 高精細アプリアイコンPNG生成（Canvas）
+        // Canvasで高精細PNGアプリアイコンを生成
         function generateAppIconDataUrl(size, styleKey) {
             const canvas = document.createElement('canvas');
             canvas.width = size;
             canvas.height = size;
             const ctx = canvas.getContext('2d');
 
+            const palettes = {
+                all: ['#fb7185', '#f59e0b', '#38bdf8', '#6366f1'],
+                spring: ['#fda4af', '#fb7185', '#e11d48', '#fecdd3'],
+                summer: ['#7dd3fc', '#38bdf8', '#0284c7', '#99f6e4'],
+                autumn: ['#fcd34d', '#f59e0b', '#d97706', '#fdba74'],
+                winter: ['#c7d2fe', '#818cf8', '#4f46e5', '#e0e7ff']
+            };
+            const colors = palettes[styleKey] || palettes.all;
+
             // 背景グラデーション
             const grad = ctx.createLinearGradient(0, 0, size, size);
-            if (styleKey === 'spring') {
-                grad.addColorStop(0, '#fda4af');
-                grad.addColorStop(1, '#e11d48');
-            } else if (styleKey === 'summer') {
-                grad.addColorStop(0, '#38bdf8');
-                grad.addColorStop(1, '#0284c7');
-            } else if (styleKey === 'autumn') {
-                grad.addColorStop(0, '#fbbf24');
-                grad.addColorStop(1, '#d97706');
-            } else if (styleKey === 'winter') {
-                grad.addColorStop(0, '#818cf8');
-                grad.addColorStop(1, '#4338ca');
-            } else {
-                // 四季彩グラデーション
-                grad.addColorStop(0, '#fb7185');
-                grad.addColorStop(0.35, '#f59e0b');
-                grad.addColorStop(0.7, '#38bdf8');
-                grad.addColorStop(1, '#4f46e5');
-            }
+            grad.addColorStop(0, colors[0]);
+            grad.addColorStop(0.38, colors[1]);
+            grad.addColorStop(0.72, colors[2]);
+            grad.addColorStop(1, colors[3]);
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, size, size);
 
-            // 繊細な和モダン波紋リング
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
-            ctx.lineWidth = size * 0.012;
+            // 和モダン波紋リング
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+            ctx.lineWidth = Math.max(2, size * 0.014);
             ctx.beginPath();
-            ctx.arc(size * 0.5, size * 0.5, size * 0.38, 0, Math.PI * 2);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.arc(size * 0.5, size * 0.5, size * 0.45, 0, Math.PI * 2);
+            ctx.arc(size * 0.5, size * 0.5, size * 0.39, 0, Math.PI * 2);
             ctx.stroke();
 
             // 中央のすりガラス風カード
             const cardW = size * 0.54;
-            const cardH = size * 0.58;
+            const cardH = size * 0.54;
             const cardX = (size - cardW) / 2;
             const cardY = (size - cardH) / 2;
-            const radius = size * 0.11;
+            const r = size * 0.12;
 
             ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
             ctx.beginPath();
-            ctx.roundRect(cardX, cardY, cardW, cardH, radius);
+            ctx.moveTo(cardX + r, cardY);
+            ctx.lineTo(cardX + cardW - r, cardY);
+            ctx.quadraticCurveTo(cardX + cardW, cardY, cardX + cardW, cardY + r);
+            ctx.lineTo(cardX + cardW, cardY + cardH - r);
+            ctx.quadraticCurveTo(cardX + cardW, cardY + cardH, cardX + cardW - r, cardY + cardH);
+            ctx.lineTo(cardX + r, cardY + cardH);
+            ctx.quadraticCurveTo(cardX, cardY + cardH, cardX, cardY + cardH - r);
+            ctx.lineTo(cardX, cardY + r);
+            ctx.quadraticCurveTo(cardX, cardY, cardX + r, cardY);
+            ctx.closePath();
             ctx.fill();
 
-            // リスト行のモチーフ
-            ctx.fillStyle = '#cbd5e1';
-            const lineX = cardX + cardW * 0.2;
-            const lineW = cardW * 0.6;
-            const lineH = size * 0.032;
-
-            ctx.beginPath();
-            ctx.roundRect(lineX, cardY + cardH * 0.28, lineW, lineH, lineH / 2);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.roundRect(lineX, cardY + cardH * 0.47, lineW * 0.78, lineH, lineH / 2);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.roundRect(lineX, cardY + cardH * 0.66, lineW * 0.55, lineH, lineH / 2);
-            ctx.fill();
-
-            // 右下の完了チェックバッジ
-            const badgeR = size * 0.115;
-            const badgeX = cardX + cardW - size * 0.03;
-            const badgeY = cardY + cardH - size * 0.03;
-
-            ctx.fillStyle = '#10b981';
-            ctx.beginPath();
-            ctx.arc(badgeX, badgeY, badgeR, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = size * 0.026;
+            // チェックマーク＆リスト線
+            ctx.strokeStyle = colors[2];
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
+            ctx.lineWidth = Math.max(3, size * 0.036);
+
             ctx.beginPath();
-            ctx.moveTo(badgeX - badgeR * 0.42, badgeY + badgeR * 0.04);
-            ctx.lineTo(badgeX - badgeR * 0.1, badgeY + badgeR * 0.36);
-            ctx.lineTo(badgeX + badgeR * 0.46, badgeY - badgeR * 0.32);
+            ctx.moveTo(size * 0.36, size * 0.51);
+            ctx.lineTo(size * 0.46, size * 0.60);
+            ctx.lineTo(size * 0.65, size * 0.40);
             ctx.stroke();
 
             return canvas.toDataURL('image/png');
         }
 
-        // ホーム画面アイコンとWeb App Manifestの更新
+        // ホーム画面用アイコンとWeb App Manifestを更新
         function updateHomeScreenIcons() {
-            const icon180 = generateAppIconDataUrl(180, appConfig.iconStyle);
-            const icon512 = generateAppIconDataUrl(512, appConfig.iconStyle);
+            const styleKey = appConfig.iconStyle || 'all';
+            const icon180 = generateAppIconDataUrl(180, styleKey);
+            const icon512 = generateAppIconDataUrl(512, styleKey);
 
-            const appleIcon = document.getElementById('apple-touch-icon');
-            const favIcon = document.getElementById('favicon-icon');
+            const appleLink = document.getElementById('apple-touch-icon');
+            if (appleLink) appleLink.href = icon180;
+
+            const favLink = document.getElementById('favicon-icon');
+            if (favLink) favLink.href = icon180;
+
             const previewImg = document.getElementById('icon-preview-img');
-
-            if (appleIcon) appleIcon.href = icon180;
-            if (favIcon) favIcon.href = icon180;
             if (previewImg) previewImg.src = icon180;
 
-            // アイコン選択ボタンのスタイル反映
             document.querySelectorAll('.icon-style-btn').forEach((btn) => {
-                if (btn.dataset.iconStyle === appConfig.iconStyle) {
-                    btn.className = 'icon-style-btn px-2.5 py-1 rounded-full text-[10px] font-bold bg-white text-slate-900 cursor-pointer';
+                if (btn.dataset.iconStyle === styleKey) {
+                    btn.className = 'icon-style-btn px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white text-slate-900 cursor-pointer';
                 } else {
                     btn.className = 'icon-style-btn px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white/15 text-white hover:bg-white/25 cursor-pointer';
                 }
             });
 
-            // Android Chrome用 Web App Manifest の動的生成
+            // Android Chrome用 Web App Manifest の動的生成（古いBlob URLを解放してメモリリーク防止）
             try {
-                const currentStartUrl = window.location.pathname + window.location.search;
+                if (currentManifestBlobUrl) {
+                    URL.revokeObjectURL(currentManifestBlobUrl);
+                    currentManifestBlobUrl = null;
+                }
+                const currentStartUrl = (window.location.pathname || '') + (window.location.search || '');
                 const manifestObj = {
                     name: 'Shiki - 四季の買い物リスト',
                     short_name: 'Shiki',
                     start_url: currentStartUrl || '.',
                     display: 'standalone',
                     background_color: '#fcfaf7',
-                    theme_color: document.getElementById('meta-theme-color')?.getAttribute('content') || '#e11d48',
+                    theme_color: document.getElementById('meta-theme-color')?.getAttribute('content') || '#d97706',
                     icons: [
                         { src: icon180, sizes: '180x180', type: 'image/png' },
                         { src: icon512, sizes: '512x512', type: 'image/png' }
                     ]
                 };
                 const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-                const manifestUrl = URL.createObjectURL(manifestBlob);
+                currentManifestBlobUrl = URL.createObjectURL(manifestBlob);
                 const manifestLink = document.getElementById('app-manifest');
-                if (manifestLink) manifestLink.href = manifestUrl;
+                if (manifestLink) manifestLink.href = currentManifestBlobUrl;
             } catch (err) {
                 console.warn('Manifest update skipped:', err);
             }
         }
 
-        // IndexedDB バックアップ保存
-        function saveBackupToIndexedDB(dataObj) {
-            try {
-                if (!window.indexedDB) return;
+        // IndexedDB バックアップ操作
+        function openIdb() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) {
+                    reject(new Error('IndexedDB not supported'));
+                    return;
+                }
                 const req = indexedDB.open(IDB_CONFIG.DB_NAME, 1);
                 req.onupgradeneeded = (e) => {
                     const db = e.target.result;
@@ -905,84 +907,184 @@
                         db.createObjectStore(IDB_CONFIG.STORE_NAME);
                     }
                 };
-                req.onsuccess = (e) => {
-                    const db = e.target.result;
-                    const tx = db.transaction(IDB_CONFIG.STORE_NAME, 'readwrite');
-                    tx.objectStore(IDB_CONFIG.STORE_NAME).put(dataObj, IDB_CONFIG.KEY);
-                };
-            } catch (err) {
-                console.warn('IndexedDB save skipped:', err);
-            }
-        }
-
-        // IndexedDB バックアップ復元
-        function loadBackupFromIndexedDB() {
-            return new Promise((resolve) => {
-                try {
-                    if (!window.indexedDB) return resolve(null);
-                    const req = indexedDB.open(IDB_CONFIG.DB_NAME, 1);
-                    req.onupgradeneeded = (e) => {
-                        const db = e.target.result;
-                        if (!db.objectStoreNames.contains(IDB_CONFIG.STORE_NAME)) {
-                            db.createObjectStore(IDB_CONFIG.STORE_NAME);
-                        }
-                    };
-                    req.onsuccess = (e) => {
-                        const db = e.target.result;
-                        const tx = db.transaction(IDB_CONFIG.STORE_NAME, 'readonly');
-                        const getReq = tx.objectStore(IDB_CONFIG.STORE_NAME).get(IDB_CONFIG.KEY);
-                        getReq.onsuccess = () => resolve(getReq.result || null);
-                        getReq.onerror = () => resolve(null);
-                    };
-                    req.onerror = () => resolve(null);
-                } catch (err) {
-                    resolve(null);
-                }
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
             });
         }
 
-        // URLパラメータへ設定を同期
-        function syncConfigToUrlParams() {
+        async function saveToIdb(data) {
             try {
-                if (!window.history || !window.history.replaceState) return;
-                const url = new URL(window.location.href);
-                if (appConfig.webhookUrl) url.searchParams.set('w', appConfig.webhookUrl);
-                else url.searchParams.delete('w');
-
-                if (appConfig.sheetUrl) url.searchParams.set('s', appConfig.sheetUrl);
-                else url.searchParams.delete('s');
-
-                if (appConfig.memberNames.member1 && appConfig.memberNames.member1 !== 'メンバー1') {
-                    url.searchParams.set('m1', appConfig.memberNames.member1);
-                }
-                if (appConfig.memberNames.member2 && appConfig.memberNames.member2 !== 'メンバー2') {
-                    url.searchParams.set('m2', appConfig.memberNames.member2);
-                }
-
-                window.history.replaceState(null, '', url.toString());
+                const db = await openIdb();
+                const tx = db.transaction(IDB_CONFIG.STORE_NAME, 'readwrite');
+                tx.objectStore(IDB_CONFIG.STORE_NAME).put(data, IDB_CONFIG.KEY);
             } catch (err) {
-                // iframe等で制限される場合はスキップ
+                // プライベートブラウズ等で失敗しても継続
             }
         }
 
-        // 家族共有リンク生成
-        function buildShareableUrl() {
-            const baseUrl = window.location.href.split('?')[0];
-            const url = new URL(baseUrl);
-            if (appConfig.webhookUrl) url.searchParams.set('w', appConfig.webhookUrl);
-            if (appConfig.sheetUrl) url.searchParams.set('s', appConfig.sheetUrl);
-            if (appConfig.memberNames.member1) url.searchParams.set('m1', appConfig.memberNames.member1);
-            if (appConfig.memberNames.member2) url.searchParams.set('m2', appConfig.memberNames.member2);
-            return url.toString();
+        async function loadFromIdb() {
+            try {
+                const db = await openIdb();
+                return await new Promise((resolve) => {
+                    const tx = db.transaction(IDB_CONFIG.STORE_NAME, 'readonly');
+                    const req = tx.objectStore(IDB_CONFIG.STORE_NAME).get(IDB_CONFIG.KEY);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch (err) {
+                return null;
+            }
         }
 
-        // 安全なクリップボードコピー
+        // 状態読み込み（URLパラメータ > localStorage > IndexedDB > FIXED定数）
+        async function loadState() {
+            const idbBackup = await loadFromIdb();
+
+            let savedWebhook = FIXED_WEBHOOK_URL || '';
+            let savedSheet = FIXED_SHEET_URL || '';
+            let savedMembers = {
+                member1: FIXED_MEMBER_1 || 'メンバー1',
+                member2: FIXED_MEMBER_2 || 'メンバー2'
+            };
+
+            if (idbBackup) {
+                if (idbBackup.webhookUrl) savedWebhook = idbBackup.webhookUrl;
+                if (idbBackup.sheetUrl) savedSheet = idbBackup.sheetUrl;
+                if (idbBackup.memberNames) savedMembers = { ...savedMembers, ...idbBackup.memberNames };
+            }
+
+            try {
+                const lsWebhook = localStorage.getItem(STORAGE_KEYS.WEBHOOK_URL);
+                const lsSheet = localStorage.getItem(STORAGE_KEYS.SHEET_URL);
+                const lsMembers = localStorage.getItem(STORAGE_KEYS.MEMBERS);
+                const lsLogs = localStorage.getItem(STORAGE_KEYS.LOGS);
+                const lsSeason = localStorage.getItem(STORAGE_KEYS.SEASON_MODE);
+                const lsIcon = localStorage.getItem(STORAGE_KEYS.ICON_STYLE);
+
+                if (lsWebhook) savedWebhook = lsWebhook;
+                if (lsSheet) savedSheet = lsSheet;
+                if (lsMembers) {
+                    const parsed = JSON.parse(lsMembers);
+                    if (parsed && parsed.member1) savedMembers.member1 = parsed.member1;
+                    if (parsed && parsed.member2) savedMembers.member2 = parsed.member2;
+                }
+                if (lsLogs) {
+                    const parsedLogs = JSON.parse(lsLogs);
+                    if (Array.isArray(parsedLogs)) sentLogs = parsedLogs;
+                }
+                if (lsSeason) appConfig.seasonChoice = lsSeason;
+                if (lsIcon) appConfig.iconStyle = lsIcon;
+            } catch (err) {
+                console.warn('localStorage load skipped:', err);
+            }
+
+            // URLパラメータからの復元（家族共有リンク経由の起動時）
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const paramW = params.get('w');
+                const paramS = params.get('s');
+                const paramM1 = params.get('m1');
+                const paramM2 = params.get('m2');
+
+                if (paramW) savedWebhook = paramW;
+                if (paramS) savedSheet = paramS;
+                if (paramM1) savedMembers.member1 = paramM1;
+                if (paramM2) savedMembers.member2 = paramM2;
+            } catch (err) {
+                console.warn('URL param parse skipped:', err);
+            }
+
+            appConfig.webhookUrl = savedWebhook;
+            appConfig.sheetUrl = savedSheet;
+            appConfig.memberNames = savedMembers;
+
+            saveState();
+        }
+
+        // 状態保存（localStorage + IndexedDB + URL同期）
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.WEBHOOK_URL, appConfig.webhookUrl || '');
+                localStorage.setItem(STORAGE_KEYS.SHEET_URL, appConfig.sheetUrl || '');
+                localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(appConfig.memberNames));
+                localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(sentLogs.slice(0, 30)));
+                localStorage.setItem(STORAGE_KEYS.SEASON_MODE, appConfig.seasonChoice);
+                localStorage.setItem(STORAGE_KEYS.ICON_STYLE, appConfig.iconStyle);
+            } catch (err) {
+                console.warn('localStorage save skipped:', err);
+            }
+
+            saveToIdb({
+                webhookUrl: appConfig.webhookUrl,
+                sheetUrl: appConfig.sheetUrl,
+                memberNames: appConfig.memberNames
+            });
+
+            // 現在のURLパラメータへも同期（ホーム画面追加時の永続化用）
+            try {
+                if (appConfig.webhookUrl && window.history && window.history.replaceState) {
+                    const shareUrl = buildShareableUrl();
+                    window.history.replaceState(null, '', shareUrl);
+                }
+            } catch (err) {
+                // iframe制限時は無視
+            }
+        }
+
+        // 家族共有リンク生成（file:// や特殊環境でも安全に動作）
+        function buildShareableUrl() {
+            try {
+                const baseUrl = window.location.href.split('?')[0];
+                const url = new URL(baseUrl);
+                if (appConfig.webhookUrl) url.searchParams.set('w', appConfig.webhookUrl);
+                if (appConfig.sheetUrl) url.searchParams.set('s', appConfig.sheetUrl);
+                if (appConfig.memberNames.member1) url.searchParams.set('m1', appConfig.memberNames.member1);
+                if (appConfig.memberNames.member2) url.searchParams.set('m2', appConfig.memberNames.member2);
+                return url.toString();
+            } catch (err) {
+                const base = window.location.href.split('?')[0];
+                const q = new URLSearchParams();
+                if (appConfig.webhookUrl) q.set('w', appConfig.webhookUrl);
+                if (appConfig.sheetUrl) q.set('s', appConfig.sheetUrl);
+                if (appConfig.memberNames.member1) q.set('m1', appConfig.memberNames.member1);
+                if (appConfig.memberNames.member2) q.set('m2', appConfig.memberNames.member2);
+                const queryString = q.toString();
+                return queryString ? `${base}?${queryString}` : base;
+            }
+        }
+
+        // ウェブアプリURLの誤貼付チェック
+        function validateWebhookInput(urlStr) {
+            if (!urlStr) return { valid: true };
+            if (urlStr.includes('docs.google.com/spreadsheets')) {
+                return {
+                    valid: false,
+                    message: 'それはシート閲覧用URLです。「script.google.com/.../exec」を貼ってください'
+                };
+            }
+            if (urlStr.endsWith('/dev')) {
+                return {
+                    valid: false,
+                    message: '末尾が「/dev」ではなく「/exec」のURLを貼ってください'
+                };
+            }
+            if (!urlStr.startsWith('https://script.google.com/') || !urlStr.endsWith('/exec')) {
+                return {
+                    valid: false,
+                    message: '「https://script.google.com/.../exec」の形式か確認してください'
+                };
+            }
+            return { valid: true };
+        }
+
+        // 安全なクリップボードコピー（iFrame対応）
         function copyTextSafe(text, successMsg) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.style.position = 'fixed';
             textarea.style.opacity = '0';
             document.body.appendChild(textarea);
+            textarea.focus();
             textarea.select();
             try {
                 document.execCommand('copy');
@@ -993,121 +1095,108 @@
             document.body.removeChild(textarea);
         }
 
-        // 多層復元（固定定数 ＞ URLパラメータ ＞ localStorage ＞ IndexedDB）
-        async function loadState() {
-            try {
-                const params = new URLSearchParams(window.location.search);
-                const paramWebhook = params.get('w');
-                const paramSheet = params.get('s');
-                const paramM1 = params.get('m1');
-                const paramM2 = params.get('m2');
-
-                const savedWebhook = localStorage.getItem(STORAGE_KEYS.WEBHOOK_URL);
-                const savedSheet = localStorage.getItem(STORAGE_KEYS.SHEET_URL);
-                const savedMembers = localStorage.getItem(STORAGE_KEYS.MEMBERS);
-                const savedLogs = localStorage.getItem(STORAGE_KEYS.LOGS);
-                const savedSeason = localStorage.getItem(STORAGE_KEYS.SEASON_MODE);
-                const savedIconStyle = localStorage.getItem(STORAGE_KEYS.ICON_STYLE);
-
-                const idbBackup = await loadBackupFromIndexedDB();
-
-                const resolvedWebhook = FIXED_WEBHOOK_URL || paramWebhook || savedWebhook || (idbBackup && idbBackup.webhookUrl) || '';
-                const resolvedSheet = FIXED_SHEET_URL || paramSheet || savedSheet || (idbBackup && idbBackup.sheetUrl) || '';
-
-                if (resolvedWebhook) appConfig.webhookUrl = resolvedWebhook;
-                if (resolvedSheet) appConfig.sheetUrl = resolvedSheet;
-
-                if (savedSeason && ['auto', 'spring', 'summer', 'autumn', 'winter'].includes(savedSeason)) {
-                    appConfig.seasonChoice = savedSeason;
-                }
-                if (savedIconStyle && ['all', 'spring', 'summer', 'autumn', 'winter'].includes(savedIconStyle)) {
-                    appConfig.iconStyle = savedIconStyle;
-                }
-
-                if (savedMembers) {
-                    const parsed = JSON.parse(savedMembers);
-                    if (parsed.member1) appConfig.memberNames.member1 = parsed.member1;
-                    if (parsed.member2) appConfig.memberNames.member2 = parsed.member2;
-                } else if (idbBackup && idbBackup.memberNames) {
-                    if (idbBackup.memberNames.member1) appConfig.memberNames.member1 = idbBackup.memberNames.member1;
-                    if (idbBackup.memberNames.member2) appConfig.memberNames.member2 = idbBackup.memberNames.member2;
-                }
-
-                if (FIXED_MEMBER_1) appConfig.memberNames.member1 = FIXED_MEMBER_1;
-                if (FIXED_MEMBER_2) appConfig.memberNames.member2 = FIXED_MEMBER_2;
-                if (paramM1) appConfig.memberNames.member1 = paramM1;
-                if (paramM2) appConfig.memberNames.member2 = paramM2;
-
-                if (savedLogs) {
-                    sentLogs = JSON.parse(savedLogs);
-                }
-
-                if (appConfig.webhookUrl || appConfig.sheetUrl || paramM1 || paramM2) {
-                    saveState();
-                }
-            } catch (err) {
-                console.warn('State load skipped:', err);
-            }
+        // HTMLエスケープ
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEYS.WEBHOOK_URL, appConfig.webhookUrl);
-                localStorage.setItem(STORAGE_KEYS.SHEET_URL, appConfig.sheetUrl);
-                localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(appConfig.memberNames));
-                localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(sentLogs.slice(0, 20)));
-                localStorage.setItem(STORAGE_KEYS.SEASON_MODE, appConfig.seasonChoice);
-                localStorage.setItem(STORAGE_KEYS.ICON_STYLE, appConfig.iconStyle);
-            } catch (err) {
-                console.warn('State save skipped:', err);
-            }
-
-            saveBackupToIndexedDB({
-                webhookUrl: appConfig.webhookUrl,
-                sheetUrl: appConfig.sheetUrl,
-                memberNames: { ...appConfig.memberNames }
-            });
-            syncConfigToUrlParams();
+        // 日付の日本語フォーマット（YYYY-MM-DD -> M月D日(曜)）
+        function formatJapaneseDate(isoDateStr) {
+            if (!isoDateStr) return '';
+            const parts = isoDateStr.split('-');
+            if (parts.length !== 3) return isoDateStr;
+            const y = Number(parts[0]);
+            const m = Number(parts[1]);
+            const d = Number(parts[2]);
+            const dt = new Date(y, m - 1, d);
+            const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+            const w = weekdays[dt.getDay()];
+            const nowYear = new Date().getFullYear();
+            return y !== nowYear ? `${y}年${m}月${d}日(${w})` : `${m}月${d}日(${w})`;
         }
 
         // トースト表示
-        let toastTimer = null;
-        function showToast(msg) {
+        function showToast(message) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-message');
             if (!toast || !toastMsg) return;
 
-            toastMsg.textContent = msg;
+            toastMsg.textContent = message;
             toast.classList.remove('opacity-0', 'translate-y-2');
             toast.classList.add('opacity-100', 'translate-y-0');
 
-            clearTimeout(toastTimer);
+            if (toastTimer) clearTimeout(toastTimer);
             toastTimer = setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', 'translate-y-2');
             }, 2600);
         }
 
-        // 日付フォーマットユーティリティ
-        function formatDateISO(dateObj) {
-            const y = dateObj.getFullYear();
-            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const d = String(dateObj.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
+        // 新旧どちらのApps Script設定でも確実に受け取れる送信ペイロード生成
+        function buildSheetPayload(itemText, deadlineStr, authorName) {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+            const formattedTimestamp = `${yyyy}/${mm}/${dd} ${hh}:${min}`;
+            const fullTimestamp = `${yyyy}/${mm}/${dd} ${hh}:${min}:${ss}`;
+
+            return {
+                timestamp: formattedTimestamp,
+                createdAt: fullTimestamp,
+                date: formattedTimestamp,
+                datetime: formattedTimestamp,
+                time: formattedTimestamp,
+                登録日時: formattedTimestamp,
+                入力日時: formattedTimestamp,
+                item: itemText,
+                name: itemText,
+                text: itemText,
+                content: itemText,
+                title: itemText,
+                買いたいもの: itemText,
+                商品名: itemText,
+                deadline: deadlineStr,
+                dueDate: deadlineStr,
+                limit: deadlineStr,
+                期限: deadlineStr,
+                author: authorName,
+                user: authorName,
+                member: authorName,
+                person: authorName,
+                入力者: authorName
+            };
         }
 
-        function formatJapaneseDate(isoStr) {
-            if (!isoStr) return '';
-            const parts = isoStr.split('-');
-            if (parts.length !== 3) return isoStr;
-            const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-            const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-            return `${Number(parts[1])}月${Number(parts[2])}日(${weekdays[date.getDay()]})`;
+        // 外部スプレッドシートへの送信実行ヘルパー
+        async function postToSpreadsheet(webhookUrl, itemText, deadlineFormatted, authorName) {
+            if (!webhookUrl) return false;
+            try {
+                const payload = buildSheetPayload(itemText, deadlineFormatted, authorName);
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                return true;
+            } catch (err) {
+                console.error('Webhook post failed:', err);
+                return false;
+            }
         }
 
         // UI描画更新
         function renderUI() {
-            // シート開くボタンの表示切替
+            // スプレッドシート閲覧ボタン表示切替
             const btnOpenSheet = document.getElementById('btn-open-sheet');
             if (btnOpenSheet) {
                 if (appConfig.sheetUrl) {
@@ -1120,40 +1209,49 @@
                 }
             }
 
-            // 入力者カードの名前とイニシャル更新
+            // 入力者カード更新
             const m1Name = appConfig.memberNames.member1 || 'メンバー1';
             const m2Name = appConfig.memberNames.member2 || 'メンバー2';
 
-            document.getElementById('label-member-1').textContent = m1Name;
-            document.getElementById('label-member-2').textContent = m2Name;
-            document.getElementById('avatar-member-1').textContent = m1Name.charAt(0);
-            document.getElementById('avatar-member-2').textContent = m2Name.charAt(0);
-
+            const label1 = document.getElementById('label-member-1');
+            const label2 = document.getElementById('label-member-2');
+            const avatar1 = document.getElementById('avatar-member-1');
+            const avatar2 = document.getElementById('avatar-member-2');
             const card1 = document.getElementById('select-member-1');
             const card2 = document.getElementById('select-member-2');
-            const av1 = document.getElementById('avatar-member-1');
-            const av2 = document.getElementById('avatar-member-2');
+
+            if (label1) label1.textContent = m1Name;
+            if (label2) label2.textContent = m2Name;
+            if (avatar1) avatar1.textContent = m1Name.charAt(0);
+            if (avatar2) avatar2.textContent = m2Name.charAt(0);
 
             if (appConfig.selectedMember === 'member1') {
-                card1.classList.add('member-card-active');
-                av1.className = 'member-avatar-active w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0';
-                card2.classList.remove('member-card-active');
-                av2.className = 'bg-slate-200 text-slate-600 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0';
+                card1?.classList.add('member-card-active');
+                avatar1?.classList.add('member-avatar-active');
+                avatar1?.classList.remove('bg-slate-200', 'text-slate-600');
+
+                card2?.classList.remove('member-card-active');
+                avatar2?.classList.remove('member-avatar-active');
+                avatar2?.classList.add('bg-slate-200', 'text-slate-600');
             } else {
-                card2.classList.add('member-card-active');
-                av2.className = 'member-avatar-active w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0';
-                card1.classList.remove('member-card-active');
-                av1.className = 'bg-slate-200 text-slate-600 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0';
+                card2?.classList.add('member-card-active');
+                avatar2?.classList.add('member-avatar-active');
+                avatar2?.classList.remove('bg-slate-200', 'text-slate-600');
+
+                card1?.classList.remove('member-card-active');
+                avatar1?.classList.remove('member-avatar-active');
+                avatar1?.classList.add('bg-slate-200', 'text-slate-600');
             }
 
-            // 送信履歴リスト描画
-            const logsContainer = document.getElementById('logs-container');
+            // 送信履歴描画
             const logCount = document.getElementById('log-count');
-            logCount.textContent = `${sentLogs.length}件`;
+            const logsContainer = document.getElementById('logs-container');
+            if (logCount) logCount.textContent = `${sentLogs.length}件`;
+            if (!logsContainer) return;
 
             if (sentLogs.length === 0) {
                 logsContainer.innerHTML = `
-                    <div class="text-center py-6 text-xs text-slate-400">
+                    <div class="py-6 text-center text-xs text-slate-400">
                         まだ送信履歴はありません
                     </div>
                 `;
@@ -1164,14 +1262,14 @@
                 const isSynced = log.synced === true;
                 const badgeHtml = isSynced
                     ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/70">送信済</span>`
-                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/70">控え保存</span>`;
+                    : `<button type="button" data-retry-id="${log.id}" class="btn-retry-log inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 transition cursor-pointer" title="タップしてスプレッドシートへ再送信">控え保存 ↻</button>`;
 
                 const deadlineBadge = log.deadline
                     ? `<span class="text-[11px] text-slate-500">期限: ${formatJapaneseDate(log.deadline)}</span>`
                     : '';
 
                 return `
-                    <div class="p-3 rounded-2xl bg-white/80 border border-slate-100 flex items-start justify-between gap-3">
+                    <div class="p-3 rounded-2xl bg-white/80 border border-slate-100 flex items-start justify-between gap-2.5">
                         <div class="min-w-0 flex-1">
                             <p class="text-sm font-semibold text-slate-800 break-words">${escapeHtml(log.item)}</p>
                             <div class="flex flex-wrap items-center gap-2 mt-1">
@@ -1180,36 +1278,41 @@
                                 <span class="text-[10px] text-slate-400">${escapeHtml(log.time)}</span>
                             </div>
                         </div>
-                        <div class="shrink-0">
+                        <div class="shrink-0 flex items-center gap-1.5">
                             ${badgeHtml}
+                            <button type="button" data-delete-id="${log.id}" aria-label="この履歴を削除" class="btn-delete-log p-1 rounded-lg text-slate-300 hover:text-slate-500 hover:bg-slate-100 transition cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
         // 期限プリセットUI更新
         const inputDeadline = document.getElementById('input-deadline');
         const deadlineDisplayText = document.getElementById('deadline-display-text');
+        const customDateLabel = document.getElementById('custom-date-label');
 
         function updateDeadlineUI(activePreset = null) {
             const val = inputDeadline.value;
             if (!val) {
                 deadlineDisplayText.textContent = '任意（指定なし）';
                 deadlineDisplayText.className = 'text-[11px] font-medium text-slate-400';
+                if (customDateLabel) {
+                    customDateLabel.textContent = 'カレンダーから日付を指定';
+                    customDateLabel.className = 'text-slate-500';
+                }
             } else {
-                deadlineDisplayText.textContent = `${formatJapaneseDate(val)} まで`;
+                const jpDate = formatJapaneseDate(val);
+                deadlineDisplayText.textContent = `${jpDate} まで`;
                 deadlineDisplayText.className = 'text-[11px] font-bold text-slate-700';
+                if (customDateLabel) {
+                    customDateLabel.textContent = `${jpDate}（指定中）`;
+                    customDateLabel.className = 'font-bold text-slate-800';
+                }
             }
 
             document.querySelectorAll('.deadline-preset').forEach((btn) => {
@@ -1223,25 +1326,29 @@
             });
         }
 
-        // 期限プリセットクリックイベント
+        function toLocalIsoDate(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
         document.querySelectorAll('.deadline-preset').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const preset = btn.dataset.preset;
-                const today = new Date();
+                const now = new Date();
                 if (preset === 'none') {
                     inputDeadline.value = '';
                 } else if (preset === 'today') {
-                    inputDeadline.value = formatDateISO(today);
+                    inputDeadline.value = toLocalIsoDate(now);
                 } else if (preset === 'tomorrow') {
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(today.getDate() + 1);
-                    inputDeadline.value = formatDateISO(tomorrow);
+                    now.setDate(now.getDate() + 1);
+                    inputDeadline.value = toLocalIsoDate(now);
                 } else if (preset === 'weekend') {
-                    const weekend = new Date(today);
-                    const day = today.getDay();
-                    const daysUntilSat = day === 6 ? 0 : (6 - day);
-                    weekend.setDate(today.getDate() + daysUntilSat);
-                    inputDeadline.value = formatDateISO(weekend);
+                    const day = now.getDay();
+                    const daysUntilSat = day === 6 ? 7 : (6 - day);
+                    now.setDate(now.getDate() + daysUntilSat);
+                    inputDeadline.value = toLocalIsoDate(now);
                 }
                 updateDeadlineUI(preset);
             });
@@ -1251,31 +1358,44 @@
             updateDeadlineUI(null);
         });
 
-        // クイック数量追加チップ
+        // クイック数量追加チップ & テキストエリア自動高さ調整
         const inputItem = document.getElementById('input-item');
+        function autoResizeTextarea() {
+            inputItem.style.height = 'auto';
+            inputItem.style.height = Math.min(inputItem.scrollHeight, 160) + 'px';
+        }
+        inputItem.addEventListener('input', autoResizeTextarea);
+
+        // PC利用時の Cmd+Enter / Ctrl+Enter 送信対応
+        inputItem.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('shopping-form').requestSubmit();
+            }
+        });
+
         document.querySelectorAll('.quick-append').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const suffix = btn.dataset.append || '';
                 const current = inputItem.value.trimEnd();
                 inputItem.value = current ? `${current}${suffix}` : suffix.trim();
+                autoResizeTextarea();
                 inputItem.focus();
             });
         });
 
         // 入力者選択
-        document.getElementById('select-member-1').addEventListener('click', () => {
-            appConfig.selectedMember = 'member1';
-            renderUI();
-        });
-        document.getElementById('select-member-2').addEventListener('click', () => {
-            appConfig.selectedMember = 'member2';
-            renderUI();
+        document.querySelectorAll('.member-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                appConfig.selectedMember = card.dataset.member;
+                renderUI();
+            });
         });
 
-        // 季節テーマ切替ボタン
-        document.querySelectorAll('.season-tab').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                appConfig.seasonChoice = btn.dataset.season;
+        // 季節テーマ切替
+        document.querySelectorAll('.season-tab').forEach((tab) => {
+            tab.addEventListener('click', () => {
+                appConfig.seasonChoice = tab.dataset.season;
                 saveState();
                 applySeasonTheme();
             });
@@ -1287,6 +1407,7 @@
             const itemText = inputItem.value.trim();
             if (!itemText) {
                 showToast('買いたいものを入力してください');
+                inputItem.focus();
                 return;
             }
 
@@ -1301,26 +1422,12 @@
             const now = new Date();
             const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-            let isSynced = false;
-
-            if (appConfig.webhookUrl) {
-                try {
-                    await fetch(appConfig.webhookUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({
-                            item: itemText,
-                            deadline: deadlineVal ? formatJapaneseDate(deadlineVal) : '',
-                            author: authorName
-                        })
-                    });
-                    isSynced = true;
-                } catch (err) {
-                    console.error('Webhook post failed:', err);
-                    isSynced = false;
-                }
-            }
+            const isSynced = await postToSpreadsheet(
+                appConfig.webhookUrl,
+                itemText,
+                deadlineVal ? formatJapaneseDate(deadlineVal) : '',
+                authorName
+            );
 
             sentLogs.unshift({
                 id: Date.now(),
@@ -1336,67 +1443,123 @@
 
             // フォームリセット（入力者は保持）
             inputItem.value = '';
+            autoResizeTextarea();
             inputDeadline.value = '';
             updateDeadlineUI('none');
 
             btnSubmit.disabled = false;
-            btnSubmitText.textContent = originalText;
 
             if (isSynced) {
+                btnSubmit.classList.add('btn-sent-success');
+                btnSubmitText.textContent = '✓ スプレッドシートへ送信完了';
                 showToast('スプレッドシートへ送信しました');
+                setTimeout(() => {
+                    btnSubmit.classList.remove('btn-sent-success');
+                    btnSubmitText.textContent = originalText;
+                }, 1600);
             } else {
+                btnSubmitText.textContent = originalText;
                 showToast('控え保存しました（左上のShikiを3回タップでURL設定）');
+            }
+        });
+
+        // 履歴内の個別再送信・個別削除（イベント委譲）
+        document.getElementById('logs-container').addEventListener('click', async (e) => {
+            const retryBtn = e.target.closest('.btn-retry-log');
+            if (retryBtn) {
+                if (!appConfig.webhookUrl) {
+                    showToast('先に左上のShikiを3回タップしてURLを設定してください');
+                    return;
+                }
+                const targetId = Number(retryBtn.dataset.retryId);
+                const logItem = sentLogs.find((item) => item.id === targetId);
+                if (!logItem) return;
+
+                retryBtn.textContent = '送信中...';
+                retryBtn.disabled = true;
+                const ok = await postToSpreadsheet(
+                    appConfig.webhookUrl,
+                    logItem.item,
+                    logItem.deadline ? formatJapaneseDate(logItem.deadline) : '',
+                    logItem.author
+                );
+                if (ok) {
+                    logItem.synced = true;
+                    saveState();
+                    renderUI();
+                    showToast('スプレッドシートへ再送信しました');
+                } else {
+                    renderUI();
+                    showToast('再送信に失敗しました');
+                }
+                return;
+            }
+
+            const deleteBtn = e.target.closest('.btn-delete-log');
+            if (deleteBtn) {
+                const targetId = Number(deleteBtn.dataset.deleteId);
+                sentLogs = sentLogs.filter((item) => item.id !== targetId);
+                saveState();
+                renderUI();
             }
         });
 
         // 履歴消去確認UI
         const btnClearLogs = document.getElementById('btn-clear-logs');
         const confirmClearLogs = document.getElementById('confirm-clear-logs');
+
         btnClearLogs.addEventListener('click', () => {
+            if (sentLogs.length === 0) return;
             btnClearLogs.classList.add('hidden');
             confirmClearLogs.classList.remove('hidden');
-            confirmClearLogs.classList.add('inline-flex');
+            confirmClearLogs.classList.add('flex');
         });
+
         document.getElementById('btn-confirm-clear-no').addEventListener('click', () => {
             confirmClearLogs.classList.add('hidden');
-            confirmClearLogs.classList.remove('inline-flex');
+            confirmClearLogs.classList.remove('flex');
             btnClearLogs.classList.remove('hidden');
         });
+
         document.getElementById('btn-confirm-clear-yes').addEventListener('click', () => {
             sentLogs = [];
             saveState();
             renderUI();
             confirmClearLogs.classList.add('hidden');
-            confirmClearLogs.classList.remove('inline-flex');
+            confirmClearLogs.classList.remove('flex');
             btnClearLogs.classList.remove('hidden');
-            showToast('送信履歴を消去しました');
+            showToast('端末内の送信履歴を消去しました');
         });
 
-        // 入力者名モーダル操作
+        // モーダル1：入力者名編集
         const memberModal = document.getElementById('member-modal');
         function openMemberModal() {
-            document.getElementById('input-member-1').value = appConfig.memberNames.member1;
-            document.getElementById('input-member-2').value = appConfig.memberNames.member2;
+            document.getElementById('input-member-1').value = appConfig.memberNames.member1 || '';
+            document.getElementById('input-member-2').value = appConfig.memberNames.member2 || '';
             memberModal.classList.remove('hidden');
         }
+
         document.getElementById('btn-edit-members').addEventListener('click', openMemberModal);
         document.getElementById('inline-edit-members').addEventListener('click', openMemberModal);
         document.getElementById('cancel-member-modal').addEventListener('click', () => {
             memberModal.classList.add('hidden');
         });
+
         document.getElementById('member-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const m1 = document.getElementById('input-member-1').value.trim();
             const m2 = document.getElementById('input-member-2').value.trim();
-            if (m1) appConfig.memberNames.member1 = m1;
-            if (m2) appConfig.memberNames.member2 = m2;
+            if (!m1 || !m2) return;
+
+            appConfig.memberNames.member1 = m1;
+            appConfig.memberNames.member2 = m2;
             saveState();
             renderUI();
             memberModal.classList.add('hidden');
             showToast('入力者の名前を更新しました');
         });
 
-        // ホーム画面追加＆アイコン設定モーダル
+        // モーダル2：ホーム画面保存＆アイコン設定
         const pwaModal = document.getElementById('pwa-modal');
         document.getElementById('btn-open-pwa').addEventListener('click', () => {
             updateHomeScreenIcons();
@@ -1413,25 +1576,25 @@
             });
         });
 
-        // 隠し連携設定モーダル（Shikiロゴ3回タップで起動）
+        // モーダル3：隠し連携設定（Shikiロゴ3回タップで開く）
         const secretModal = document.getElementById('secret-url-modal');
         const inputWebhookUrl = document.getElementById('input-webhook-url');
         const inputSheetUrl = document.getElementById('input-sheet-url');
         let logoTapCount = 0;
-        let logoTapTimer = null;
+        let logoTapResetTimer = null;
 
         document.getElementById('brand-logo-trigger').addEventListener('click', () => {
             logoTapCount += 1;
-            clearTimeout(logoTapTimer);
+            if (logoTapResetTimer) clearTimeout(logoTapResetTimer);
+            logoTapResetTimer = setTimeout(() => {
+                logoTapCount = 0;
+            }, 1200);
+
             if (logoTapCount >= 3) {
                 logoTapCount = 0;
-                inputWebhookUrl.value = appConfig.webhookUrl;
-                inputSheetUrl.value = appConfig.sheetUrl;
+                inputWebhookUrl.value = appConfig.webhookUrl || '';
+                inputSheetUrl.value = appConfig.sheetUrl || '';
                 secretModal.classList.remove('hidden');
-            } else {
-                logoTapTimer = setTimeout(() => {
-                    logoTapCount = 0;
-                }, 700);
             }
         });
 
@@ -1441,7 +1604,13 @@
 
         document.getElementById('secret-url-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            appConfig.webhookUrl = inputWebhookUrl.value.trim();
+            const rawWebhook = inputWebhookUrl.value.trim();
+            const check = validateWebhookInput(rawWebhook);
+            if (!check.valid) {
+                showToast(check.message);
+                return;
+            }
+            appConfig.webhookUrl = rawWebhook;
             appConfig.sheetUrl = inputSheetUrl.value.trim();
             saveState();
             updateHomeScreenIcons();
@@ -1457,8 +1626,9 @@
                 showToast('ウェブアプリURLを入力してください');
                 return;
             }
-            if (!testUrl.startsWith('https://script.google.com/') || !testUrl.endsWith('/exec')) {
-                showToast('「/exec」で終わる正しいURLか確認してください');
+            const check = validateWebhookInput(testUrl);
+            if (!check.valid) {
+                showToast(check.message);
                 return;
             }
 
@@ -1474,17 +1644,17 @@
                 updateHomeScreenIcons();
                 renderUI();
 
-                await fetch(testUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        item: '【連携テスト】Shikiからのテスト送信',
-                        deadline: '',
-                        author: appConfig.memberNames.member1 || 'テスト'
-                    })
-                });
-                showToast('テスト送信しました！シートをご確認ください');
+                const ok = await postToSpreadsheet(
+                    testUrl,
+                    '【連携テスト】Shikiからのテスト送信',
+                    '',
+                    appConfig.memberNames.member1 || 'テスト'
+                );
+                if (ok) {
+                    showToast('テスト送信しました！シートをご確認ください');
+                } else {
+                    showToast('テスト送信に失敗しました');
+                }
             } catch (err) {
                 console.error('Test webhook failed:', err);
                 showToast('テスト送信に失敗しました');
@@ -1496,26 +1666,51 @@
 
         // 家族共有リンクをコピー
         document.getElementById('btn-copy-share-link').addEventListener('click', () => {
-            appConfig.webhookUrl = inputWebhookUrl.value.trim();
+            const rawWebhook = inputWebhookUrl.value.trim();
+            const check = validateWebhookInput(rawWebhook);
+            if (!check.valid) {
+                showToast(check.message);
+                return;
+            }
+            appConfig.webhookUrl = rawWebhook;
             appConfig.sheetUrl = inputSheetUrl.value.trim();
             saveState();
             const shareUrl = buildShareableUrl();
             copyTextSafe(shareUrl, '家族共有リンクをコピーしました');
         });
 
-        // 設定固定HTMLをダウンロード
+        // 設定固定HTMLをダウンロード（動的DOM・blob URL・$記号エスケープを完全クリーン化）
         document.getElementById('btn-download-bound-html').addEventListener('click', () => {
             const currentWebhook = inputWebhookUrl.value.trim();
+            const check = validateWebhookInput(currentWebhook);
+            if (!check.valid) {
+                showToast(check.message);
+                return;
+            }
             const currentSheet = inputSheetUrl.value.trim();
             appConfig.webhookUrl = currentWebhook;
             appConfig.sheetUrl = currentSheet;
             saveState();
 
-            let htmlSource = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-            htmlSource = htmlSource.replace(/const FIXED_WEBHOOK_URL = ".*?";/, `const FIXED_WEBHOOK_URL = ${JSON.stringify(currentWebhook)};`);
-            htmlSource = htmlSource.replace(/const FIXED_SHEET_URL = ".*?";/, `const FIXED_SHEET_URL = ${JSON.stringify(currentSheet)};`);
-            htmlSource = htmlSource.replace(/const FIXED_MEMBER_1 = ".*?";/, `const FIXED_MEMBER_1 = ${JSON.stringify(appConfig.memberNames.member1)};`);
-            htmlSource = htmlSource.replace(/const FIXED_MEMBER_2 = ".*?";/, `const FIXED_MEMBER_2 = ${JSON.stringify(appConfig.memberNames.member2)};`);
+            // 現在のDOMをクローンして動的要素や一時的なblob URLを除去したクリーンなHTMLを生成
+            const clonedRoot = document.documentElement.cloneNode(true);
+            const particles = clonedRoot.querySelector('#seasonal-particles');
+            if (particles) particles.innerHTML = '';
+            const manifestEl = clonedRoot.querySelector('#app-manifest');
+            if (manifestEl) manifestEl.setAttribute('href', '');
+            const appleIconEl = clonedRoot.querySelector('#apple-touch-icon');
+            if (appleIconEl) appleIconEl.setAttribute('href', '');
+            const favIconEl = clonedRoot.querySelector('#favicon-icon');
+            if (favIconEl) favIconEl.setAttribute('href', '');
+            const previewImgEl = clonedRoot.querySelector('#icon-preview-img');
+            if (previewImgEl) previewImgEl.setAttribute('src', '');
+            clonedRoot.querySelectorAll('.modal-backdrop').forEach((m) => m.classList.add('hidden'));
+
+            let htmlSource = '<!DOCTYPE html>\n' + clonedRoot.outerHTML;
+            htmlSource = htmlSource.replace(/const FIXED_WEBHOOK_URL = ".*?";/, () => `const FIXED_WEBHOOK_URL = ${JSON.stringify(currentWebhook)};`);
+            htmlSource = htmlSource.replace(/const FIXED_SHEET_URL = ".*?";/, () => `const FIXED_SHEET_URL = ${JSON.stringify(currentSheet)};`);
+            htmlSource = htmlSource.replace(/const FIXED_MEMBER_1 = ".*?";/, () => `const FIXED_MEMBER_1 = ${JSON.stringify(appConfig.memberNames.member1)};`);
+            htmlSource = htmlSource.replace(/const FIXED_MEMBER_2 = ".*?";/, () => `const FIXED_MEMBER_2 = ${JSON.stringify(appConfig.memberNames.member2)};`);
 
             const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
@@ -1527,6 +1722,20 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             showToast('設定固定HTMLをダウンロードしました');
+        });
+
+        // モーダルの背景タップ＆Escapeキーで閉じる
+        document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
+            backdrop.addEventListener('click', (e) => {
+                if (e.target === backdrop) {
+                    backdrop.classList.add('hidden');
+                }
+            });
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-backdrop').forEach((m) => m.classList.add('hidden'));
+            }
         });
 
         // GASコードコピー
@@ -1542,7 +1751,9 @@
   }
   var data = JSON.parse(e.postData.contents);
   var now = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm");
-  sheet.appendRow([now, data.item || "", data.deadline || "", data.author || "", ""]);
+  var itemVal = data.item || data.name || data.text || "";
+  var dateVal = data.timestamp || data.date || now;
+  sheet.appendRow([dateVal, itemVal, data.deadline || "", data.author || "", ""]);
   var lastRow = sheet.getLastRow();
   sheet.getRange(lastRow, 5).insertCheckboxes();
   return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
