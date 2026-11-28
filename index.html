@@ -43,7 +43,6 @@
 
     body {
       background: linear-gradient(155deg, var(--bg-from) 0%, var(--bg-via) 52%, var(--bg-to) 100%);
-      background-attachment: fixed;
       color: #1e293b;
     }
 
@@ -78,8 +77,8 @@
 
     /* アクセント連動ボタン */
     .btn-accent {
-      background-color: var(--accent);
-      color: #ffffff;
+      background-color: var(--accent) !important;
+      color: #ffffff !important;
     }
     .btn-accent:hover {
       filter: brightness(0.95);
@@ -88,22 +87,35 @@
       transform: scale(0.985);
     }
 
+    /* 選択中チップ・ボタン（Tailwind CDNの後注入スタイルに負けないよう明確に優先） */
     .chip-active {
-      background-color: var(--accent-soft);
-      border-color: var(--accent-border);
-      color: var(--accent-text);
-      font-weight: 700;
+      background-color: var(--accent) !important;
+      border-color: var(--accent) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.16), 0 0 0 3px var(--accent-soft) !important;
+      transform: translateY(-1px);
+    }
+
+    .chip-inactive {
+      background-color: #ffffff;
+      border-color: #e2e8f0;
+      color: #475569;
+    }
+    .chip-inactive:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
     }
 
     .nav-active {
-      color: var(--accent);
+      color: var(--accent) !important;
     }
 
     /* 四季テーマ連動の入力フォーカス＆チェックボックス */
     .shiki-field:focus {
       outline: none;
-      border-color: var(--accent-border);
-      box-shadow: 0 0 0 3px var(--accent-soft);
+      border-color: var(--accent-border) !important;
+      box-shadow: 0 0 0 3px var(--accent-soft) !important;
     }
 
     .shiki-checkbox {
@@ -111,9 +123,9 @@
     }
 
     .shiki-accent-pill {
-      background-color: var(--accent-soft);
-      border-color: var(--accent-border);
-      color: var(--accent-text);
+      background-color: var(--accent-soft) !important;
+      border-color: var(--accent-border) !important;
+      color: var(--accent-text) !important;
     }
 
     /* スクロールバー抑制 */
@@ -151,8 +163,27 @@
           class="flex items-center gap-2.5 text-left rounded-2xl px-1.5 py-1 -ml-1.5 active:scale-95 transition-transform focus:outline-none"
           aria-label="Shiki"
         >
-          <div id="logo-mark" class="w-9 h-9 rounded-2xl flex items-center justify-center shadow-sm text-white font-extrabold text-base tracking-tight" style="background: linear-gradient(135deg, var(--accent), var(--accent-end));">
-            四
+          <div id="logo-mark" class="w-10 h-10 rounded-[13px] flex items-center justify-center shadow-md ring-1 ring-black/5 overflow-hidden shrink-0" style="background: linear-gradient(145deg, var(--accent), var(--accent-end));">
+            <svg class="w-7 h-7" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <!-- 繊細な内枠リング -->
+              <circle cx="32" cy="32" r="26" stroke="white" stroke-opacity="0.28" stroke-width="1.2" />
+              <!-- 四季の四弁花（花菱モダン紋） -->
+              <g opacity="0.96">
+                <path d="M32 10C37.5 16.5 37.5 25.5 32 30.5C26.5 25.5 26.5 16.5 32 10Z" fill="white" />
+                <path d="M54 32C47.5 37.5 38.5 37.5 33.5 32C38.5 26.5 47.5 26.5 54 32Z" fill="white" fill-opacity="0.88" />
+                <path d="M32 54C26.5 47.5 26.5 38.5 32 33.5C37.5 38.5 37.5 47.5 32 54Z" fill="white" fill-opacity="0.96" />
+                <path d="M10 32C16.5 26.5 25.5 26.5 30.5 32C25.5 37.5 16.5 37.5 10 32Z" fill="white" fill-opacity="0.88" />
+              </g>
+              <!-- 斜め方向の淡い重なり弁 -->
+              <g opacity="0.34" transform="rotate(45 32 32)">
+                <path d="M32 14C35.8 19 35.8 25.5 32 29.5C28.2 25.5 28.2 19 32 14Z" fill="white" />
+                <path d="M50 32C45 35.8 38.5 35.8 34.5 32C38.5 28.2 45 28.2 50 32Z" fill="white" />
+                <path d="M32 50C28.2 45 28.2 38.5 32 34.5C35.8 38.5 35.8 45 32 50Z" fill="white" />
+                <path d="M14 32C19 28.2 25.5 28.2 29.5 32C25.5 35.8 19 35.8 14 32Z" fill="white" />
+              </g>
+              <!-- 中心の真珠ドット -->
+              <circle cx="32" cy="32" r="3.6" fill="white" />
+            </svg>
           </div>
           <div>
             <div class="flex items-center gap-1.5">
@@ -262,25 +293,48 @@
 
           <!-- ② いつまでに買うか -->
           <div class="space-y-2.5">
-            <span class="text-xs font-bold tracking-wide text-slate-600 flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 inline-flex items-center justify-center text-[11px]">2</span>
-              いつまでに買うか <span class="font-normal text-slate-400">（任意）</span>
-            </span>
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <span class="text-xs font-bold tracking-wide text-slate-600 flex items-center gap-1.5">
+                <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 inline-flex items-center justify-center text-[11px]">2</span>
+                いつまでに買うか <span class="font-normal text-slate-400">（任意）</span>
+              </span>
+              <span id="due-selected-pill" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200/80">
+                選択中：指定なし
+              </span>
+            </div>
 
-            <div id="due-btn-group" class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-              <button type="button" data-due-mode="none" class="due-mode-btn rounded-2xl border border-slate-200 bg-white px-2.5 py-2.5 text-xs font-medium text-slate-600 transition-all">指定なし</button>
-              <button type="button" data-due-mode="today" class="due-mode-btn rounded-2xl border border-slate-200 bg-white px-2.5 py-2.5 text-xs font-medium text-slate-600 transition-all">今日</button>
-              <button type="button" data-due-mode="tomorrow" class="due-mode-btn rounded-2xl border border-slate-200 bg-white px-2.5 py-2.5 text-xs font-medium text-slate-600 transition-all">明日</button>
-              <button type="button" data-due-mode="weekend" class="due-mode-btn rounded-2xl border border-slate-200 bg-white px-2.5 py-2.5 text-xs font-medium text-slate-600 transition-all">今週末</button>
-              <button type="button" data-due-mode="custom" class="due-mode-btn col-span-2 sm:col-span-1 rounded-2xl border border-slate-200 bg-white px-2.5 py-2.5 text-xs font-medium text-slate-600 transition-all">日付選択</button>
+            <div id="due-btn-group" class="grid grid-cols-3 sm:grid-cols-5 gap-2" role="group" aria-label="いつまでに買うか">
+              <button type="button" data-due-mode="none" aria-pressed="true" class="due-mode-btn chip-inactive rounded-2xl border px-2 py-2.5 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+                <span class="due-check hidden text-[11px] leading-none" aria-hidden="true">✓</span>
+                <span>指定なし</span>
+              </button>
+              <button type="button" data-due-mode="today" aria-pressed="false" class="due-mode-btn chip-inactive rounded-2xl border px-2 py-2.5 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+                <span class="due-check hidden text-[11px] leading-none" aria-hidden="true">✓</span>
+                <span>今日</span>
+              </button>
+              <button type="button" data-due-mode="tomorrow" aria-pressed="false" class="due-mode-btn chip-inactive rounded-2xl border px-2 py-2.5 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+                <span class="due-check hidden text-[11px] leading-none" aria-hidden="true">✓</span>
+                <span>明日</span>
+              </button>
+              <button type="button" data-due-mode="weekend" aria-pressed="false" class="due-mode-btn chip-inactive rounded-2xl border px-2 py-2.5 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+                <span class="due-check hidden text-[11px] leading-none" aria-hidden="true">✓</span>
+                <span>今週末</span>
+              </button>
+              <button type="button" data-due-mode="custom" aria-pressed="false" class="due-mode-btn chip-inactive col-span-2 sm:col-span-1 rounded-2xl border px-2 py-2.5 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+                <span class="due-check hidden text-[11px] leading-none" aria-hidden="true">✓</span>
+                <span>日付選択</span>
+              </button>
             </div>
 
             <div id="custom-date-wrap" class="hidden pt-1">
-              <input
-                id="custom-date-input"
-                type="date"
-                class="shiki-field w-full rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white px-4 py-2.5 text-sm text-slate-700"
-              />
+              <div class="rounded-2xl p-2.5 border transition-all" style="background-color: var(--accent-soft); border-color: var(--accent-border);">
+                <label for="custom-date-input" class="block text-[11px] font-bold mb-1 pl-1" style="color: var(--accent-text);">購入予定日を選択</label>
+                <input
+                  id="custom-date-input"
+                  type="date"
+                  class="shiki-field w-full rounded-xl border border-white/80 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700"
+                />
+              </div>
             </div>
           </div>
 
@@ -288,35 +342,44 @@
 
           <!-- ③ 入力者 -->
           <div class="space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold tracking-wide text-slate-600 flex items-center gap-1.5">
-                <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 inline-flex items-center justify-center text-[11px]">3</span>
-                入力者
-              </span>
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-xs font-bold tracking-wide text-slate-600 flex items-center gap-1.5 shrink-0">
+                  <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 inline-flex items-center justify-center text-[11px]">3</span>
+                  入力者
+                </span>
+                <span id="author-selected-pill" class="shiki-accent-pill inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border truncate">
+                  選択中：自分
+                </span>
+              </div>
               <button
                 id="edit-authors-btn"
                 type="button"
-                class="inline-flex items-center gap-1 text-xs font-medium text-slate-400 hover:text-slate-600 px-2 py-1 rounded-xl transition-colors"
+                class="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-slate-400 hover:text-slate-600 px-2 py-1 rounded-xl transition-colors"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
                 名前を編集
               </button>
             </div>
 
-            <div class="grid grid-cols-2 gap-2.5">
+            <div class="grid grid-cols-2 gap-2.5" role="group" aria-label="入力者">
               <button
                 id="author-btn-0"
                 type="button"
-                class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-all truncate"
+                aria-pressed="true"
+                class="chip-inactive rounded-2xl border px-3.5 py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all"
               >
-                自分
+                <span id="author-check-0" class="w-4 h-4 rounded-full border border-current/40 inline-flex items-center justify-center text-[10px] shrink-0 transition-all">✓</span>
+                <span id="author-label-0" class="truncate">自分</span>
               </button>
               <button
                 id="author-btn-1"
                 type="button"
-                class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-all truncate"
+                aria-pressed="false"
+                class="chip-inactive rounded-2xl border px-3.5 py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all"
               >
-                パートナー
+                <span id="author-check-1" class="w-4 h-4 rounded-full border border-slate-300 inline-flex items-center justify-center text-[10px] shrink-0 transition-all"></span>
+                <span id="author-label-1" class="truncate">パートナー</span>
               </button>
             </div>
           </div>
@@ -447,8 +510,14 @@
                 id="list-search-input"
                 type="search"
                 placeholder="品目・数量・備考・入力者で検索"
-                class="shiki-field w-full rounded-2xl border border-slate-200 bg-slate-50/80 focus:bg-white pl-9 pr-3 py-2 text-xs text-slate-700 placeholder:text-slate-400"
+                class="shiki-field w-full rounded-2xl border border-slate-200 bg-slate-50/80 focus:bg-white pl-9 pr-8 py-2 text-xs text-slate-700 placeholder:text-slate-400"
               />
+              <button
+                id="list-search-clear-btn"
+                type="button"
+                aria-label="検索をクリア"
+                class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] font-bold"
+              >✕</button>
             </div>
             <select
               id="list-sort-select"
@@ -692,10 +761,18 @@
           未連携（端末内保存モードで動作中）
         </p>
 
-        <!-- 端末内データをスプレッドシートへ一括反映 -->
-        <button id="push-all-to-sheet-btn" type="button" class="w-full rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/70 px-3 py-2.5 text-xs font-bold text-emerald-800 transition-colors">
-          📤 端末内のリストをスプレッドシートへ一括反映
-        </button>
+        <!-- 項目転送チェック＆端末内データの一括反映 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button id="verify-transfer-btn" type="button" class="rounded-2xl border border-sky-200 bg-sky-50/80 hover:bg-sky-100/80 px-3 py-2.5 text-xs font-bold text-sky-800 transition-colors">
+            🧪 項目転送テスト（書き込み検証）
+          </button>
+          <button id="push-all-to-sheet-btn" type="button" class="rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/70 px-3 py-2.5 text-xs font-bold text-emerald-800 transition-colors">
+            📤 端末内リストを一括反映
+          </button>
+        </div>
+
+        <!-- 項目転送テストの詳細結果 -->
+        <div id="transfer-verify-result" class="hidden rounded-2xl border px-3.5 py-2.5 text-[11px] leading-relaxed space-y-1"></div>
 
         <!-- 未反映キュー表示 -->
         <div id="pending-ops-box" class="hidden flex items-center justify-between gap-2 rounded-2xl bg-amber-50 border border-amber-200 px-3 py-2.5">
@@ -709,8 +786,8 @@
       <!-- スプレッドシート構成仕様（9列） -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <h4 class="text-xs font-bold text-slate-700">スプレッドシート構成仕様（9列・自動整備対応）</h4>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">v2.4.1</span>
+          <h4 class="text-xs font-bold text-slate-700">スプレッドシート構成仕様（★買い物リスト対応・9列）</h4>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">v2.6</span>
         </div>
         <div class="rounded-2xl bg-slate-50 border border-slate-100 p-3 space-y-2 text-[11px] text-slate-600">
           <div class="grid grid-cols-3 gap-1.5 font-mono text-[10px]">
@@ -725,8 +802,8 @@
             <div class="bg-white rounded-xl px-2 py-1.5 border border-slate-100"><strong class="text-slate-800">I:</strong> 更新日時</div>
           </div>
           <ul class="list-disc pl-4 space-y-0.5 text-[10px] text-slate-500">
-            <li>旧7列（数量/備考なし）・旧8列（備考なし）のシートは接続時に自動で9列へ移行します。</li>
-            <li>ステータス列のプルダウン入力規則・買物済行の取り消し線・期限の日付ズレ防止書式を自動適用します。</li>
+            <li>旧5列（入力日時 / 買いたいもの・数量 / 期限 / 入力者 / ステータス）を自動検知し、原本バックアップ作成後に品目・数量・備考・日付を安全に9列へ自動移行します。</li>
+            <li>ステータス列のプルダウン（未購入／買物済）・買物済行の取り消し線・期限の日付ズレ防止書式を自動適用します。</li>
           </ul>
         </div>
       </div>
@@ -751,7 +828,7 @@
       <!-- GASコード雛形 -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <h4 class="text-xs font-bold text-slate-700">GASスクリプト雛形（v2.4.1 双方向同期・自動移行対応）</h4>
+          <h4 class="text-xs font-bold text-slate-700">GASスクリプト雛形（v2.6 ★買い物リスト自動移行対応）</h4>
           <button id="copy-gas-code-btn" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 text-white text-[11px] font-bold hover:bg-slate-700">
             コードをコピー
           </button>
@@ -792,6 +869,9 @@
         bgTo: "#fdf2f8",
         accent: "#e11d48",
         accentEnd: "#fb7185",
+        iconGradStart: "#be123c",
+        iconGradMid: "#e11d48",
+        iconGradEnd: "#fda4af",
         accentSoft: "#ffe4e6",
         accentBorder: "#fecdd3",
         accentText: "#be123c",
@@ -806,6 +886,9 @@
         bgTo: "#ecfeff",
         accent: "#0284c7",
         accentEnd: "#38bdf8",
+        iconGradStart: "#0369a1",
+        iconGradMid: "#0284c7",
+        iconGradEnd: "#67e8f9",
         accentSoft: "#e0f2fe",
         accentBorder: "#bae6fd",
         accentText: "#0369a1",
@@ -820,6 +903,9 @@
         bgTo: "#fef3c7",
         accent: "#d97706",
         accentEnd: "#fbbf24",
+        iconGradStart: "#b45309",
+        iconGradMid: "#d97706",
+        iconGradEnd: "#fcd34d",
         accentSoft: "#fef3c7",
         accentBorder: "#fde68a",
         accentText: "#b45309",
@@ -834,6 +920,9 @@
         bgTo: "#eef2ff",
         accent: "#4f46e5",
         accentEnd: "#818cf8",
+        iconGradStart: "#312e81",
+        iconGradMid: "#4f46e5",
+        iconGradEnd: "#a5b4fc",
         accentSoft: "#e0e7ff",
         accentBorder: "#c7d2fe",
         accentText: "#4338ca",
@@ -1044,6 +1133,15 @@
       return "";
     }
 
+    function formatShortMD(ymd) {
+      if (!ymd) return "";
+      const parts = ymd.split("-").map(Number);
+      if (parts.length !== 3 || parts.some(isNaN)) return ymd;
+      const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+      const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+      return `${parts[1]}/${parts[2]}(${weekdays[dt.getDay()]})`;
+    }
+
     function getDueBadgeInfo(dueDate) {
       if (!dueDate) return null;
       const parts = dueDate.split("-").map(Number);
@@ -1054,8 +1152,7 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
-      const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
-      const mdLabel = `${parts[1]}/${parts[2]}(${weekdays[target.getDay()]})`;
+      const mdLabel = formatShortMD(dueDate);
 
       if (diffDays < 0) return { label: `期限切れ ${mdLabel}`, cls: "bg-red-100 text-red-700" };
       if (diffDays === 0) return { label: "今日まで", cls: "bg-rose-100 text-rose-700" };
@@ -1384,52 +1481,115 @@
 
     function generateDynamicAppIconAndManifest(themeObj) {
       try {
+        const size = 512;
+        const cx = size / 2;
+        const cy = size / 2;
         const canvas = document.createElement("canvas");
-        canvas.width = 512;
-        canvas.height = 512;
+        canvas.width = size;
+        canvas.height = size;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        // 背景グラデーション
-        const grad = ctx.createLinearGradient(0, 0, 512, 512);
-        grad.addColorStop(0, themeObj.accent);
-        grad.addColorStop(1, themeObj.accentEnd || themeObj.accent);
-        ctx.fillStyle = grad;
+        // 1. フルブリードの多段階グラデーション背景（iOSホーム画面での角丸マスク時に余白が出ない設計）
+        const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+        bgGrad.addColorStop(0, themeObj.iconGradStart || themeObj.accent);
+        bgGrad.addColorStop(0.52, themeObj.iconGradMid || themeObj.accent);
+        bgGrad.addColorStop(1, themeObj.iconGradEnd || themeObj.accentEnd || themeObj.accent);
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, size, size);
+
+        // 2. 左上からの柔らかな環境光（ガラスのような奥行き感）
+        const glowGrad = ctx.createRadialGradient(size * 0.24, size * 0.2, 20, size * 0.28, size * 0.28, size * 0.78);
+        glowGrad.addColorStop(0, "rgba(255, 255, 255, 0.34)");
+        glowGrad.addColorStop(0.55, "rgba(255, 255, 255, 0.06)");
+        glowGrad.addColorStop(1, "rgba(0, 0, 0, 0.08)");
+        ctx.fillStyle = glowGrad;
+        ctx.fillRect(0, 0, size, size);
+
+        // 3. 和モダンの繊細な二重円フレーム
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.24)";
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(0, 0, 512, 512, 112) : ctx.rect(0, 0, 512, 512);
+        ctx.arc(cx, cy, 202, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 184, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // 4. 四季の四弁花（花菱モダン紋）を描画するヘルパー
+        const drawPetal = (angleRad, innerR, outerR, halfWidth, fillStyle) => {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(angleRad);
+          ctx.beginPath();
+          ctx.moveTo(0, -outerR);
+          ctx.bezierCurveTo(
+            halfWidth, -(outerR - (outerR - innerR) * 0.34),
+            halfWidth, -(innerR + (outerR - innerR) * 0.22),
+            0, -innerR
+          );
+          ctx.bezierCurveTo(
+            -halfWidth, -(innerR + (outerR - innerR) * 0.22),
+            -halfWidth, -(outerR - (outerR - innerR) * 0.34),
+            0, -outerR
+          );
+          ctx.closePath();
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+          ctx.restore();
+        };
+
+        // 斜め45度の淡い重なり花弁（四季の移ろいを表現）
+        for (let i = 0; i < 4; i++) {
+          drawPetal(Math.PI / 4 + (i * Math.PI) / 2, 24, 138, 36, "rgba(255, 255, 255, 0.26)");
+        }
+
+        // メインの4弁（上下左右に均整のとれた純白のグラデーション弁）
+        ctx.save();
+        ctx.shadowColor = "rgba(15, 23, 42, 0.16)";
+        ctx.shadowBlur = 18;
+        ctx.shadowOffsetY = 6;
+        for (let i = 0; i < 4; i++) {
+          const alpha = i % 2 === 0 ? 0.98 : 0.9;
+          drawPetal((i * Math.PI) / 2, 18, 166, 48, `rgba(255, 255, 255, ${alpha})`);
+        }
+        ctx.restore();
+
+        // 5. 中心の真珠ドット＆光輪
+        ctx.save();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.32)";
+        ctx.beginPath();
+        ctx.arc(cx, cy, 32, 0, Math.PI * 2);
         ctx.fill();
 
-        // 中央の和モダン円
-        ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
+        const centerGrad = ctx.createRadialGradient(cx - 5, cy - 5, 2, cx, cy, 20);
+        centerGrad.addColorStop(0, "#ffffff");
+        centerGrad.addColorStop(1, "rgba(255, 255, 255, 0.88)");
+        ctx.fillStyle = centerGrad;
         ctx.beginPath();
-        ctx.arc(256, 256, 170, 0, Math.PI * 2);
+        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
         ctx.fill();
-
-        // 「四」ロゴ
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 220px 'Noto Sans JP', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("四", 256, 236);
-
-        // 下部 "SHIKI"
-        ctx.font = "700 44px Inter, sans-serif";
-        ctx.fillStyle = "rgba(255,255,255,0.92)";
-        ctx.fillText("SHIKI", 256, 405);
+        ctx.restore();
 
         const pngUrl = canvas.toDataURL("image/png");
 
-        const setLink = (rel, href) => {
+        const setLink = (rel, href, sizes) => {
           let link = document.querySelector(`link[rel="${rel}"]`);
           if (!link) {
             link = document.createElement("link");
             link.rel = rel;
             document.head.appendChild(link);
           }
+          if (sizes) link.sizes = sizes;
           link.href = href;
         };
-        setLink("apple-touch-icon", pngUrl);
-        setLink("icon", pngUrl);
+        setLink("apple-touch-icon", pngUrl, "512x512");
+        setLink("icon", pngUrl, "512x512");
 
         if (window.Blob && window.URL && typeof window.URL.createObjectURL === "function") {
           const manifest = {
@@ -1438,7 +1598,7 @@
             display: "standalone",
             background_color: themeObj.bgFrom,
             theme_color: themeObj.accent,
-            icons: [{ src: pngUrl, sizes: "512x512", type: "image/png" }]
+            icons: [{ src: pngUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }]
           };
           const blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
           if (state.lastManifestUrl) {
@@ -1535,10 +1695,17 @@
 
     async function flushPendingOps() {
       if (!state.config.gasUrl || state.pendingOps.length === 0) return { flushed: 0 };
+      if (typeof navigator !== "undefined" && navigator.onLine === false) return { flushed: 0 };
+
       let flushed = 0;
       const remaining = [];
+      let networkFailed = false;
 
       for (const op of state.pendingOps) {
+        if (networkFailed) {
+          remaining.push(op);
+          continue;
+        }
         const res = await postPayloadToGas(op.payload);
         if (res.ok) {
           flushed++;
@@ -1548,6 +1715,8 @@
           }
         } else {
           remaining.push(op);
+          // 通信不能時は残りのキューを順番維持したまま早期中断
+          networkFailed = true;
         }
       }
 
@@ -1593,16 +1762,25 @@
           await persistConfig();
         }
 
-        // 未送信キューに残っているIDはローカル優先で保護（削除キューは復活させない）
+        // 未送信キューを時系列順に評価し、各IDの最終状態（追加/編集 vs 削除）を正確に保護
+        // （オフライン時の「削除→元に戻す」で復元アイテムが消える競合を防止）
         const pendingUpsertIds = new Set();
         const pendingDeleteIds = new Set();
         state.pendingOps.forEach((op) => {
           if (op.action === "delete" && op.payload?.id) {
-            pendingDeleteIds.add(String(op.payload.id));
+            const idStr = String(op.payload.id);
+            pendingUpsertIds.delete(idStr);
+            pendingDeleteIds.add(idStr);
           } else if (op.action === "bulk_delete" && Array.isArray(op.payload?.ids)) {
-            op.payload.ids.forEach((did) => pendingDeleteIds.add(String(did)));
+            op.payload.ids.forEach((did) => {
+              const idStr = String(did);
+              pendingUpsertIds.delete(idStr);
+              pendingDeleteIds.add(idStr);
+            });
           } else if (op.payload?.id) {
-            pendingUpsertIds.add(String(op.payload.id));
+            const idStr = String(op.payload.id);
+            pendingDeleteIds.delete(idStr);
+            pendingUpsertIds.add(idStr);
           }
         });
         const mergedMap = new Map();
@@ -1616,7 +1794,7 @@
           const completed =
             typeof r.completed === "boolean"
               ? r.completed
-              : st === "買物済" || st === "完了" || st === "TRUE" || st === "true";
+              : st === "買物済" || st === "購入済" || st === "完了" || st === "TRUE" || st === "true";
           const rawDue = String(r.dueDate || r.due || "").trim();
 
           mergedMap.set(id, {
@@ -1686,7 +1864,7 @@
         if (!silent) showToast(`端末内の ${state.items.length} 件をスプレッドシートへ反映しました`);
         return { ok: true, pushed: state.items.length, data: res.data };
       } else {
-        if (!silent) showToast("一括反映に失敗しました（GASを最新v2.4で再デプロイしてください）");
+        if (!silent) showToast("一括反映に失敗しました（GASを最新v2.6で再デプロイしてください）");
         return { ok: false };
       }
     }
@@ -1699,6 +1877,11 @@
     function showToast(message, options = {}) {
       const container = document.getElementById("toast-container");
       if (!container) return;
+
+      // 連続タップ時にトーストが画面を覆わないよう最新2件までに制限
+      while (container.children.length >= 2) {
+        container.firstElementChild.remove();
+      }
 
       const toast = document.createElement("div");
       toast.className = "pointer-events-auto max-w-md w-full bg-slate-900/95 text-white rounded-2xl shadow-lg px-4 py-3 flex items-center justify-between gap-3 text-xs font-medium transition-all duration-200";
@@ -1795,36 +1978,94 @@
     }
 
     function updateDueButtonsUI() {
-      document.querySelectorAll(".due-mode-btn").forEach((btn) => {
-        const mode = btn.getAttribute("data-due-mode");
-        if (mode === state.selectedDueMode) {
-          btn.classList.add("chip-active");
-        } else {
-          btn.classList.remove("chip-active");
-        }
-      });
       const wrap = document.getElementById("custom-date-wrap");
+      const dateInput = document.getElementById("custom-date-input");
+
       if (state.selectedDueMode === "custom") {
         wrap.classList.remove("hidden");
-        const dateInput = document.getElementById("custom-date-input");
         if (!dateInput.value) dateInput.value = formatYMD(new Date());
       } else {
         wrap.classList.add("hidden");
       }
+
+      document.querySelectorAll(".due-mode-btn").forEach((btn) => {
+        const mode = btn.getAttribute("data-due-mode");
+        const isActive = mode === state.selectedDueMode;
+        const checkMark = btn.querySelector(".due-check");
+
+        btn.setAttribute("aria-pressed", String(isActive));
+        if (isActive) {
+          btn.classList.add("chip-active");
+          btn.classList.remove("chip-inactive");
+          if (checkMark) checkMark.classList.remove("hidden");
+        } else {
+          btn.classList.remove("chip-active");
+          btn.classList.add("chip-inactive");
+          if (checkMark) checkMark.classList.add("hidden");
+        }
+      });
+
+      // 選択中の期限を見出し右のバッジに分かりやすく明示
+      const pill = document.getElementById("due-selected-pill");
+      if (pill) {
+        const computedYmd = getDueDateFromMode(state.selectedDueMode, dateInput ? dateInput.value : "");
+        const modeNames = {
+          none: "指定なし",
+          today: "今日",
+          tomorrow: "明日",
+          weekend: "今週末",
+          custom: "日付指定"
+        };
+        if (state.selectedDueMode === "none" || !computedYmd) {
+          pill.textContent = "選択中：指定なし";
+          pill.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200/80";
+        } else {
+          const shortDate = formatShortMD(computedYmd);
+          const prefix = state.selectedDueMode === "custom" ? shortDate : `${modeNames[state.selectedDueMode]}・${shortDate}`;
+          pill.textContent = `選択中：${prefix}`;
+          pill.className = "shiki-accent-pill inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border";
+        }
+      }
     }
 
     function updateAuthorButtonsUI() {
+      const name0 = state.config.authors[0] || "自分";
+      const name1 = state.config.authors[1] || "パートナー";
       const btn0 = document.getElementById("author-btn-0");
       const btn1 = document.getElementById("author-btn-1");
-      btn0.textContent = state.config.authors[0] || "自分";
-      btn1.textContent = state.config.authors[1] || "パートナー";
+      const label0 = document.getElementById("author-label-0");
+      const label1 = document.getElementById("author-label-1");
+      const check0 = document.getElementById("author-check-0");
+      const check1 = document.getElementById("author-check-1");
+      const selectedPill = document.getElementById("author-selected-pill");
 
-      if (state.selectedAuthorIdx === 0) {
-        btn0.classList.add("chip-active");
-        btn1.classList.remove("chip-active");
-      } else {
-        btn1.classList.add("chip-active");
-        btn0.classList.remove("chip-active");
+      if (label0) label0.textContent = name0;
+      if (label1) label1.textContent = name1;
+
+      const applyAuthorState = (btn, checkEl, isActive) => {
+        btn.setAttribute("aria-pressed", String(isActive));
+        if (isActive) {
+          btn.classList.add("chip-active");
+          btn.classList.remove("chip-inactive");
+          if (checkEl) {
+            checkEl.textContent = "✓";
+            checkEl.className = "w-4 h-4 rounded-full bg-white/25 border border-white/70 text-white inline-flex items-center justify-center text-[10px] font-extrabold shrink-0 transition-all";
+          }
+        } else {
+          btn.classList.remove("chip-active");
+          btn.classList.add("chip-inactive");
+          if (checkEl) {
+            checkEl.textContent = "";
+            checkEl.className = "w-4 h-4 rounded-full border border-slate-300 inline-flex items-center justify-center text-[10px] shrink-0 transition-all";
+          }
+        }
+      };
+
+      applyAuthorState(btn0, check0, state.selectedAuthorIdx === 0);
+      applyAuthorState(btn1, check1, state.selectedAuthorIdx === 1);
+
+      if (selectedPill) {
+        selectedPill.textContent = `選択中：${state.selectedAuthorIdx === 0 ? name0 : name1}`;
       }
     }
 
@@ -2394,12 +2635,15 @@
       document.getElementById("edit-item-text").value = item.text;
 
       const editQtySelect = document.getElementById("edit-item-qty");
+      // 前回一時追加した20超えオプションを毎回クリーンアップ
+      editQtySelect.querySelectorAll('option[data-extra-qty="1"]').forEach((opt) => opt.remove());
       const qtyVal = normalizeNumericQuantity(item.quantity || "");
       // 20を超える数値が既存データに入っていた場合は一時的に選択肢へ追加
       if (qtyVal && !Array.from(editQtySelect.options).some((o) => o.value === qtyVal)) {
         const extraOpt = document.createElement("option");
         extraOpt.value = qtyVal;
         extraOpt.textContent = qtyVal;
+        extraOpt.setAttribute("data-extra-qty", "1");
         editQtySelect.appendChild(extraOpt);
       }
       editQtySelect.value = qtyVal;
@@ -2543,8 +2787,15 @@
     }
 
     async function handleSaveAdminConfig() {
-      state.config.gasUrl = document.getElementById("gas-url-input").value.trim();
-      state.config.sheetUrl = document.getElementById("sheet-url-input").value.trim();
+      const rawGasUrl = document.getElementById("gas-url-input").value.trim();
+      const rawSheetUrl = document.getElementById("sheet-url-input").value.trim();
+      if (rawGasUrl && rawGasUrl.includes("docs.google.com/spreadsheets")) {
+        document.getElementById("admin-sync-status").textContent = "⚠️ ここはスプレッドシートURLではなく、Apps ScriptのデプロイURL（/exec）を入力してください";
+        showToast("GASのウェブアプリURL（/exec）を入力してください");
+        return;
+      }
+      state.config.gasUrl = rawGasUrl;
+      state.config.sheetUrl = rawSheetUrl;
       await persistConfig();
       updateSyncStatusIndicator();
       showToast("連携設定を保存しました");
@@ -2556,11 +2807,16 @@
         showToast("GASウェブアプリURLを入力してください");
         return;
       }
+      const statusEl = document.getElementById("admin-sync-status");
+      if (gasUrl.includes("docs.google.com/spreadsheets")) {
+        statusEl.textContent = "⚠️ ここはスプレッドシートURLではなく、Apps Scriptで発行した /exec のURLを入力してください";
+        showToast("GASのウェブアプリURL（/exec）を入力してください");
+        return;
+      }
       state.config.gasUrl = gasUrl;
       state.config.sheetUrl = document.getElementById("sheet-url-input").value.trim();
       await persistConfig();
 
-      const statusEl = document.getElementById("admin-sync-status");
       statusEl.textContent = "接続テスト中...";
 
       const pingRes = await sendToGAS("ping", null, {}, { enqueueOnFail: false });
@@ -2607,9 +2863,133 @@
       updateSyncStatusIndicator();
     }
 
+    /**
+     * スプレッドシートへの実データ転送テスト（送信→シートから再取得して6項目一致を検証→テスト行を自動削除）
+     */
+    async function handleVerifyTransferToSheet() {
+      const verifyBtn = document.getElementById("verify-transfer-btn");
+      const gasUrl = document.getElementById("gas-url-input").value.trim();
+      const resultBox = document.getElementById("transfer-verify-result");
+      const showBox = (type, htmlText) => {
+        resultBox.classList.remove("hidden", "bg-emerald-50", "border-emerald-200", "text-emerald-800", "bg-amber-50", "border-amber-200", "text-amber-900", "bg-rose-50", "border-rose-200", "text-rose-800", "bg-slate-50", "border-slate-200", "text-slate-700");
+        if (type === "ok") resultBox.classList.add("bg-emerald-50", "border-emerald-200", "text-emerald-800");
+        else if (type === "warn") resultBox.classList.add("bg-amber-50", "border-amber-200", "text-amber-900");
+        else if (type === "err") resultBox.classList.add("bg-rose-50", "border-rose-200", "text-rose-800");
+        else resultBox.classList.add("bg-slate-50", "border-slate-200", "text-slate-700");
+        resultBox.innerHTML = htmlText;
+      };
+
+      if (!gasUrl) {
+        showToast("先にGASウェブアプリURLを入力してください");
+        return;
+      }
+      if (gasUrl.includes("docs.google.com/spreadsheets")) {
+        showBox("err", "<strong>URL形式エラー：</strong>スプレッドシートURLではなく、Apps ScriptのデプロイURL（末尾 <code>/exec</code>）を入力してください。");
+        return;
+      }
+
+      state.config.gasUrl = gasUrl;
+      await persistConfig();
+
+      if (verifyBtn) {
+        verifyBtn.disabled = true;
+        verifyBtn.classList.add("opacity-60", "pointer-events-none");
+      }
+
+      try {
+        showBox("info", "転送テスト中...（1/3 テスト項目をスプレッドシートへ送信しています）");
+
+        const nowIso = new Date().toISOString();
+        const testItem = {
+          id: "shiki_verify_" + Date.now().toString(36),
+          text: "【転送テスト】りんご",
+          quantity: "3",
+          note: "Shiki自動検証メモ",
+          dueDate: formatYMD(new Date()),
+          author: state.config.authors[0] || "自分",
+          completed: false,
+          createdAt: nowIso,
+          updatedAt: nowIso
+        };
+
+        // 1. テスト行を送信（add）
+        const addRes = await sendToGAS("add", testItem, {}, { enqueueOnFail: false });
+        if (!addRes.ok) {
+          showBox("err", "<strong>❌ 送信失敗：</strong>GASへPOSTできませんでした。ウェブアプリのアクセス権限が「全員」になっているか確認してください。");
+          showToast("転送テスト（送信）に失敗しました");
+          return;
+        }
+
+        // 2. スプレッドシートから再取得（doGet）して実際に書き込まれた値を照合
+        showBox("info", "転送テスト中...（2/3 スプレッドシートから書き込まれた項目を読み戻しています）");
+        let readItem = null;
+        let gasVersion = "";
+        try {
+          const sep = gasUrl.includes("?") ? "&" : "?";
+          const res = await fetch(`${gasUrl}${sep}t=${Date.now()}`, { method: "GET", redirect: "follow" });
+          const data = JSON.parse(await res.text());
+          gasVersion = data.version || "";
+          if (Array.isArray(data.items)) {
+            readItem = data.items.find((it) => String(it.id) === testItem.id) || null;
+          }
+        } catch (_) {
+          readItem = null;
+        }
+
+        // 3. テスト行を自動削除してシートを綺麗な状態に戻す
+        showBox("info", "転送テスト中...（3/3 テスト行をシートから後片付けしています）");
+        await sendToGAS("delete", testItem, {}, { enqueueOnFail: false });
+
+        if (!readItem) {
+          showBox(
+            "err",
+            "<strong>❌ 読み戻し失敗：</strong>送信は完了しましたが、シート一覧からテスト行を確認できませんでした。下の最新GASコード（<strong>v2.6</strong>）をコピーして「新バージョン」で再デプロイしてください。"
+          );
+          showToast("最新GASコードでの再デプロイが必要です");
+          return;
+        }
+
+        const checks = [
+          { label: "買いたいもの", ok: String(readItem.text || readItem.item || "") === testItem.text },
+          { label: "数量", ok: normalizeNumericQuantity(readItem.quantity || readItem.qty || "") === testItem.quantity },
+          { label: "備考", ok: String(readItem.note || readItem.memo || "") === testItem.note },
+          { label: "期限", ok: String(readItem.dueDate || "") === testItem.dueDate },
+          { label: "入力者", ok: String(readItem.author || "") === testItem.author },
+          { label: "ステータス", ok: readItem.completed === false || readItem.status === "未購入" }
+        ];
+        const failed = checks.filter((c) => !c.ok);
+        const summaryBadges = checks
+          .map((c) => `<span class="inline-block mr-1.5">${c.ok ? "✅" : "⚠️"}${c.label}</span>`)
+          .join("");
+
+        if (failed.length === 0) {
+          showBox(
+            "ok",
+            `<div><strong>✅ 全6項目の転送を確認しました！</strong>${gasVersion ? `（GAS v${gasVersion}）` : ""}</div>` +
+            `<div class="mt-1">${summaryBadges}</div>` +
+            `<div class="text-[10px] opacity-80 mt-1">※検証に使用したテスト行はシートから自動で削除済みです。</div>`
+          );
+          showToast("スプレッドシートへの全項目転送を確認しました！");
+        } else {
+          showBox(
+            "warn",
+            `<div><strong>⚠️ 一部の項目がシートへ反映されていません（${failed.map((f) => f.label).join("・")}）</strong></div>` +
+            `<div class="mt-1">${summaryBadges}</div>` +
+            `<div class="text-[10px] mt-1">下の最新GASコード（<strong>v2.6</strong>）をコピーして Apps Script へ貼り付け、「デプロイを管理 → 新バージョン」で更新してください。</div>`
+          );
+          showToast("GASスクリプトの更新（v2.6）が必要です");
+        }
+      } finally {
+        if (verifyBtn) {
+          verifyBtn.disabled = false;
+          verifyBtn.classList.remove("opacity-60", "pointer-events-none");
+        }
+      }
+    }
+
     function handleCopyShareUrl() {
       try {
-        const base = window.location.href.split("?")[0];
+        const base = window.location.href.split("?")[0].split("#")[0];
         const params = new URLSearchParams();
         if (state.config.gasUrl) params.set("gas", state.config.gasUrl);
         if (state.config.sheetUrl) params.set("sheet", state.config.sheetUrl);
@@ -2641,6 +3021,10 @@
         if (floating) floating.innerHTML = "";
         const toast = clone.querySelector("#toast-container");
         if (toast) toast.innerHTML = "";
+        const listDom = clone.querySelector("#shopping-list-container");
+        if (listDom) listDom.innerHTML = "";
+        const recentDom = clone.querySelector("#recent-list-container");
+        if (recentDom) recentDom.innerHTML = "";
         ["#admin-modal", "#edit-item-modal", "#authors-modal", "#confirm-modal"].forEach((sel) => {
           const m = clone.querySelector(sel);
           if (m) m.classList.add("hidden");
@@ -2669,16 +3053,40 @@
 
     /**
      * =====================================================================
-     * GASスクリプト雛形（v2.4.1 買いたいもの・数量・備考9列構成／自動移行・書式整備・双方向完全同期）
+     * GASスクリプト雛形（v2.6 「★買い物リスト」旧5列→新9列自動移行＆双方向完全同期）
      * =====================================================================
      */
-    const GAS_TEMPLATE_SOURCE = `// Shiki v2.4.1 完全双方向同期 Google Apps Script
+    const GAS_TEMPLATE_SOURCE = `// Shiki v2.6 完全双方向同期 Google Apps Script（「★買い物リスト」旧5列→新9列 自動仕様変更対応）
 // 標準9列構成: A:ID | B:買いたいもの | C:数量 | D:備考 | E:期限 | F:入力者 | G:ステータス | H:作成日時 | I:更新日時
-// 対応操作: 追加(add) / 編集・買物済切替(update) / 削除(delete) / 一括削除(bulk_delete) / 一括反映(sync_all) / 同期取得(doGet) / 診断(ping)
+// 初回はApps Scriptエディタ上で関数「setupShikiSpreadsheet」を実行するか、アプリから「接続テスト＆同期」を押すと
+// 原本バックアップを自動作成したうえで、既存データを9列仕様へ自動移行します。
 
-var SHIKI_VERSION = "2.4.1";
+var SHIKI_VERSION = "2.6";
 var SHIKI_TZ = "Asia/Tokyo";
 var SHIKI_HEADERS = ["ID", "買いたいもの", "数量", "備考", "期限", "入力者", "ステータス", "作成日時", "更新日時"];
+
+/**
+ * 【手動ワンクリック用】Apps Scriptエディタから直接実行して「★買い物リスト」を新9列仕様へ整備
+ */
+function setupShikiSpreadsheet() {
+  var ctx = getTargetSheet_();
+  applySheetStyling_(ctx.sheet);
+  var msg = "Shiki v" + SHIKI_VERSION + " セットアップ完了｜シート: " + ctx.sheet.getName() +
+    (ctx.migrated ? "｜" + ctx.migrated : "｜すでに最新の9列仕様です");
+  Logger.log(msg);
+  return msg;
+}
+
+/**
+ * 全角英数・全角スペースを半角へ正規化
+ */
+function toHalfWidth_(str) {
+  return String(str || "")
+    .replace(/[！-～]/g, function (s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    })
+    .replace(/　/g, " ");
+}
 
 /**
  * 日時を日本時間の見やすい文字列（yyyy-MM-dd HH:mm:ss）へ正規化
@@ -2698,33 +3106,90 @@ function formatJstTimestamp_(val) {
 }
 
 /**
- * 期限を yyyy-MM-dd（文字列）へ正規化（タイムゾーンによる1日ズレを防止）
+ * 期限を yyyy-MM-dd（文字列）へ正規化（日本語表記「11月27日(金)」等も基準年から自動変換）
  */
-function formatDueDate_(val) {
+function formatDueDate_(val, refTimestamp) {
   if (!val) return "";
   if (val instanceof Date) {
     return Utilities.formatDate(val, SHIKI_TZ, "yyyy-MM-dd");
   }
-  var s = String(val).trim();
+  var s = toHalfWidth_(val).trim();
   if (!s || s === "指定なし") return "";
+
+  // YYYY-MM-DD / YYYY/M/D 形式
   var m = s.match(/^(\\d{4})[\\/-](\\d{1,2})[\\/-](\\d{1,2})/);
   if (m) {
-    var mm = ("0" + m[2]).slice(-2);
-    var dd = ("0" + m[3]).slice(-2);
-    return m[1] + "-" + mm + "-" + dd;
+    return m[1] + "-" + ("0" + m[2]).slice(-2) + "-" + ("0" + m[3]).slice(-2);
+  }
+
+  // 「11月27日(金)」「12/25」形式を入力日時の年から YYYY-MM-DD へ補完
+  var jp = s.match(/(\\d{1,2})\\s*[月\\/]\\s*(\\d{1,2})/);
+  if (jp) {
+    var baseDate = refTimestamp ? new Date(String(refTimestamp).replace(/\\//g, "-")) : new Date();
+    if (isNaN(baseDate.getTime())) baseDate = new Date();
+    var year = baseDate.getFullYear();
+    var month = Number(jp[1]);
+    var day = Number(jp[2]);
+    // 11〜12月入力で1〜2月指定なら翌年とみなす
+    if (baseDate.getMonth() + 1 >= 11 && month <= 2) {
+      year += 1;
+    }
+    return year + "-" + ("0" + month).slice(-2) + "-" + ("0" + day).slice(-2);
   }
   return s;
 }
 
 /**
- * 数量を単位なしの数値文字列へ正規化（例: "2本" -> "2", "" -> ""）
+ * 数量を単位なしの数値文字列へ正規化（例: "2本" -> "2", "１０個" -> "10", "" -> ""）
  */
 function normalizeQty_(val) {
   if (val === null || val === undefined) return "";
-  var s = String(val).trim();
+  var s = toHalfWidth_(val).trim();
   if (!s) return "";
   var m = s.match(/^(\\d+)/);
   return m ? m[1] : "";
+}
+
+/**
+ * 旧5列の「買いたいもの・数量」1列テキストを { item, quantity, note } へ自動分解
+ * 例: "ビオラの苗　１０個" -> { item: "ビオラの苗", quantity: "10", note: "" }
+ * 例: "ビオラ　10  苗で"   -> { item: "ビオラ", quantity: "10", note: "苗で" }
+ * 例: "ボディーソープ　ウエルシアで買う" -> { item: "ボディーソープ", quantity: "", note: "ウエルシアで買う" }
+ */
+function splitLegacyItemField_(rawText) {
+  var original = String(rawText || "").trim();
+  if (!original) return { item: "", quantity: "", note: "" };
+
+  var normalized = toHalfWidth_(original).replace(/\\s+/g, " ").trim();
+  var tokens = normalized.split(" ");
+  if (tokens.length === 1) {
+    return { item: original, quantity: "", note: "" };
+  }
+
+  var itemParts = [];
+  var quantity = "";
+  var noteParts = [];
+  var unitPattern = /^(\\d+)(?:個|本|枚|袋|パック|箱|缶|束|玉|切|丁|尾|セット|ロール|つ|kg|g|ml|l)?$/i;
+
+  for (var i = 0; i < tokens.length; i++) {
+    var tok = tokens[i];
+    if (i === 0) {
+      itemParts.push(tok);
+      continue;
+    }
+    var m = tok.match(unitPattern);
+    if (!quantity && m) {
+      quantity = m[1];
+    } else {
+      noteParts.push(tok);
+    }
+  }
+
+  return {
+    item: itemParts.join(" ").trim(),
+    quantity: quantity,
+    note: noteParts.join(" ").trim()
+  };
 }
 
 /**
@@ -2799,7 +3264,60 @@ function applySheetStyling_(sheet) {
 }
 
 /**
- * 対象シート取得＆旧構成（7列・8列など）からの安全な自動マイグレーション
+ * 旧5列（「★買い物リスト」原本：入力日時/買いたいもの・数量/期限/入力者/ステータス）を
+ * バックアップ作成後に新9列仕様へ安全に移行
+ */
+function migrateLegacy5ColSheet_(ss, sheet) {
+  var backupName = "移行前バックアップ_" + Utilities.formatDate(new Date(), SHIKI_TZ, "yyyyMMdd_HHmmss");
+  var backupSheet = sheet.copyTo(ss);
+  backupSheet.setName(backupName);
+  // バックアップシートは末尾へ移動し、メインの「シート1」を1枚目に維持
+  ss.setActiveSheet(backupSheet);
+  ss.moveActiveSheet(ss.getNumSheets());
+  ss.setActiveSheet(sheet);
+
+  var oldValues = sheet.getDataRange().getValues();
+  var migratedRows = [];
+
+  for (var i = 1; i < oldValues.length; i++) {
+    var rawDate = oldValues[i][0];
+    var rawItemQty = oldValues[i][1];
+    var rawDue = oldValues[i][2];
+    var rawAuthor = oldValues[i][3];
+    var rawStatus = oldValues[i][4];
+
+    // 品目が空の行（旧形式不整合で混入した空行など）はスキップ
+    if (!String(rawItemQty || "").trim()) continue;
+
+    var split = splitLegacyItemField_(rawItemQty);
+    if (!split.item) continue;
+
+    var id = "sk_mig_" + Utilities.getUuid().slice(0, 10);
+    var qtyCell = split.quantity === "" ? "" : Number(split.quantity);
+    var createdStr = formatJstTimestamp_(rawDate);
+    var dueStr = formatDueDate_(rawDue, rawDate);
+    var authorStr = String(rawAuthor || "").trim();
+    var stRaw = String(rawStatus || "").trim();
+    var statusStr = (stRaw === "購入済" || stRaw === "買物済" || stRaw === "完了" || stRaw === "TRUE" || stRaw === "true")
+      ? "買物済"
+      : "未購入";
+
+    migratedRows.push([id, split.item, qtyCell, split.note, dueStr, authorStr, statusStr, createdStr, createdStr]);
+  }
+
+  // シート内容をクリアして新9列構成で再構築
+  sheet.clear();
+  sheet.getRange(1, 1, 1, SHIKI_HEADERS.length).setValues([SHIKI_HEADERS]);
+  if (migratedRows.length > 0) {
+    writeRowsSafe_(sheet, 2, migratedRows);
+  }
+  applySheetStyling_(sheet);
+
+  return "旧5列から新9列へ自動移行（" + migratedRows.length + "件変換・バックアップ「" + backupName + "」作成済）";
+}
+
+/**
+ * 対象シート取得＆旧構成（5列・7列・8列など）からの安全な自動マイグレーション
  */
 function getTargetSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -2818,8 +3336,12 @@ function getTargetSheet_() {
     return String(v || "").trim();
   });
 
+  // パターン0：「★買い物リスト」旧5列構成 ["入力日時", "買いたいもの・数量", "期限（いつまで）", "入力者", "ステータス"]
+  if (firstRow[0] === "入力日時" || (firstRow[0] !== "ID" && firstRow[1] && firstRow[1].indexOf("買いたいもの") !== -1)) {
+    migratedMsg = migrateLegacy5ColSheet_(ss, sheet);
+  }
   // パターン1：旧7列構成 ["ID", "買いたいもの", "期限", "入力者", "ステータス", "作成日時", "更新日時"]
-  if (firstRow[0] === "ID" && firstRow[2] === "期限") {
+  else if (firstRow[0] === "ID" && firstRow[2] === "期限") {
     sheet.insertColumnsBefore(3, 2);
     sheet.getRange(1, 3, 1, 2).setValues([["数量", "備考"]]);
     applySheetStyling_(sheet);
@@ -2867,11 +3389,12 @@ function findRowById_(rows, id, fallbackText) {
 function buildRowFromData_(data, existingCreated) {
   var id = String(data.id || Utilities.getUuid());
   var item = String(data.item || data.text || data.name || "").trim();
-  var quantity = normalizeQty_(data.quantity !== undefined ? data.quantity : data.qty);
+  var qtyStr = normalizeQty_(data.quantity !== undefined ? data.quantity : data.qty);
+  var quantityCell = qtyStr === "" ? "" : Number(qtyStr);
   var note = String(data.note !== undefined ? data.note : (data.memo || "")).trim();
-  var due = formatDueDate_(data.dueDate !== undefined ? data.dueDate : data.due);
+  var due = formatDueDate_(data.dueDate !== undefined ? data.dueDate : data.due, data.createdAt || data.timestamp);
   var author = String(data.author || data.user || "").trim();
-  var status = (data.completed === true || data.status === "買物済" || data.status === "完了")
+  var status = (data.completed === true || data.status === "買物済" || data.status === "購入済" || data.status === "完了")
     ? "買物済"
     : "未購入";
   var createdAt = existingCreated
@@ -2881,8 +3404,28 @@ function buildRowFromData_(data, existingCreated) {
   return {
     id: id,
     item: item,
-    rowValues: [id, item, quantity, note, due, author, status, createdAt, updatedAt]
+    quantity: qtyStr,
+    note: note,
+    dueDate: due,
+    author: author,
+    status: status,
+    rowValues: [id, item, quantityCell, note, due, author, status, createdAt, updatedAt]
   };
+}
+
+/**
+ * 1行または複数行をテキスト書式（期限・日時）保護付きで安全に書き込む
+ */
+function writeRowsSafe_(sheet, startRow, rows2d) {
+  if (!rows2d || rows2d.length === 0) return;
+  var numRows = rows2d.length;
+  // 100行超えの追記でも書式が崩れないよう、書き込み対象行の表示書式を確実に保護
+  sheet.getRange(startRow, 3, numRows, 1).setHorizontalAlignment("center").setNumberFormat("#,##0");
+  sheet.getRange(startRow, 4, numRows, 1).setWrap(true);
+  sheet.getRange(startRow, 5, numRows, 1).setNumberFormat("@").setHorizontalAlignment("center");
+  sheet.getRange(startRow, 6, numRows, 2).setHorizontalAlignment("center");
+  sheet.getRange(startRow, 8, numRows, 2).setNumberFormat("@");
+  sheet.getRange(startRow, 1, numRows, SHIKI_HEADERS.length).setValues(rows2d);
 }
 
 function doPost(e) {
@@ -2941,7 +3484,7 @@ function doPost(e) {
         if (rowNum) {
           var prevCreated = rows[rowNum - 1][7];
           var builtUpd = buildRowFromData_(itemsList[p], prevCreated);
-          sheet.getRange(rowNum, 1, 1, SHIKI_HEADERS.length).setValues([builtUpd.rowValues]);
+          writeRowsSafe_(sheet, rowNum, [builtUpd.rowValues]);
           updatedCount++;
         } else {
           appendedRows.push(built.rowValues);
@@ -2949,7 +3492,7 @@ function doPost(e) {
       }
       if (appendedRows.length > 0) {
         var startRow = sheet.getLastRow() + 1;
-        sheet.getRange(startRow, 1, appendedRows.length, SHIKI_HEADERS.length).setValues(appendedRows);
+        writeRowsSafe_(sheet, startRow, appendedRows);
       }
       applySheetStyling_(sheet);
       return jsonOut_({
@@ -2973,22 +3516,28 @@ function doPost(e) {
       if (targetRow > 0) {
         var existingCreated = rows[targetRow - 1][7];
         var builtUpdate = buildRowFromData_(data, existingCreated);
-        sheet.getRange(targetRow, 1, 1, SHIKI_HEADERS.length).setValues([builtUpdate.rowValues]);
+        writeRowsSafe_(sheet, targetRow, [builtUpdate.rowValues]);
+        return jsonOut_({ ok: true, action: "update", id: builtUpdate.id, row: targetRow, saved: builtUpdate, spreadsheetUrl: sheetUrl });
       } else if (builtSingle.item) {
         var newRowIdx = sheet.getLastRow() + 1;
-        sheet.getRange(newRowIdx, 1, 1, SHIKI_HEADERS.length).setValues([builtSingle.rowValues]);
+        writeRowsSafe_(sheet, newRowIdx, [builtSingle.rowValues]);
+        return jsonOut_({ ok: true, action: "update", id: builtSingle.id, row: newRowIdx, saved: builtSingle, spreadsheetUrl: sheetUrl });
       }
       return jsonOut_({ ok: true, action: "update", id: builtSingle.id, spreadsheetUrl: sheetUrl });
     }
 
     // action === "add"（同一IDが存在すれば上書き、なければ末尾追記）
-    if (targetRow > 0) {
-      sheet.getRange(targetRow, 1, 1, SHIKI_HEADERS.length).setValues([builtSingle.rowValues]);
-    } else if (builtSingle.item) {
-      var addRowIdx = sheet.getLastRow() + 1;
-      sheet.getRange(addRowIdx, 1, 1, SHIKI_HEADERS.length).setValues([builtSingle.rowValues]);
+    if (!builtSingle.item) {
+      return jsonOut_({ ok: false, error: "品目が空です", spreadsheetUrl: sheetUrl });
     }
-    return jsonOut_({ ok: true, action: "add", id: builtSingle.id, spreadsheetUrl: sheetUrl });
+    var writtenRow = targetRow;
+    if (targetRow > 0) {
+      writeRowsSafe_(sheet, targetRow, [builtSingle.rowValues]);
+    } else {
+      writtenRow = sheet.getLastRow() + 1;
+      writeRowsSafe_(sheet, writtenRow, [builtSingle.rowValues]);
+    }
+    return jsonOut_({ ok: true, action: "add", id: builtSingle.id, row: writtenRow, saved: builtSingle, spreadsheetUrl: sheetUrl });
   } catch (err) {
     return jsonOut_({ ok: false, error: String(err) });
   } finally {
@@ -3013,56 +3562,32 @@ function doGet(e) {
       }
       var qtyStr = normalizeQty_(rows[i][2]);
       var noteStr = String(rows[i][3] || "").trim();
-      var dueStr = formatDueDate_(rows[i][4]);
+      var dueStr = formatDueDate_(rows[i][4], rows[i][7]);
       var authorStr = String(rows[i][5] || "").trim();
       var st = String(rows[i][6] || "").trim();
+      var isCompleted = (st === "買物済" || st === "購入済" || st === "完了" || st === "TRUE" || st === "true");
       var hasCreated = Boolean(rows[i][7]);
       var createdStr = formatJstTimestamp_(rows[i][7] || rows[i][8]);
       var updatedStr = formatJstTimestamp_(rows[i][8] || rows[i][7]);
       // シート上で直接手入力された行の作成日時も初回のみ補完して並び順を安定化
       if (!hasCreated) {
-        sheet.getRange(i + 1, 8, 1, 2).setValues([[createdStr, updatedStr]]);
+        sheet.getRange(i + 1, 8, 1, 2).setNumberFormat("@").setValues([[createdStr, updatedStr]]);
       }
       items.push({
-      // 買いたいもの・数量・備考入力クリア＆重複チェック
-      const itemInput = document.getElementById("item-input");
-      const qtyInput = document.getElementById("qty-input");
-      const noteInput = document.getElementById("note-input");
-      itemInput.addEventListener("input", () => {
-        toggleClearInputBtn();
-        checkDuplicateItemWarning();
-      });
-      qtyInput.addEventListener("change", toggleClearInputBtn);
-      noteInput.addEventListener("input", toggleClearInputBtn);
-      document.getElementById("clear-input-btn").addEventListener("click", () => {
-        itemInput.value = "";
-        qtyInput.value = "";
-        noteInput.value = "";
-        toggleClearInputBtn();
-        checkDuplicateItemWarning();
-        itemInput.focus();
-      });
-
-      // 期限モード切替
-      document.querySelectorAll(".due-mode-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          state.selectedDueMode = btn.getAttribute("data-due-mode");
-          updateDueButtonsUI();
-        });
-      });
-
-      // 入力者切替（選んだ入力者を端末ごとに記憶）
-      document.getElementById("author-btn-0").addEventListener("click", async () => {
-        state.selectedAuthorIdx = 0;
-        state.config.selectedAuthorIdx = 0;
-        updateAuthorButtonsUI();
-        await persistConfig();
-      });
-      document.getElementById("author-btn-1").addEventListener("click", async () => {
-        state.selectedAuthorIdx = 1;
-        state.config.selectedAuthorIdx = 1;
-        updateAuthorButtonsUI();
-        await persistConfig();
+        id: rowId,
+        text: text,
+        item: text,
+        quantity: qtyStr,
+        qty: qtyStr,
+        note: noteStr,
+        memo: noteStr,
+        dueDate: dueStr,
+        due: dueStr || "指定なし",
+        author: authorStr,
+        status: isCompleted ? "買物済" : "未購入",
+        completed: isCompleted,
+        createdAt: createdStr,
+        updatedAt: updatedStr
       });
     }
     return jsonOut_({
@@ -3087,11 +3612,14 @@ function doGet(e) {
       // フォーム送信（買い物リストへ追加）
       document.getElementById("add-item-form").addEventListener("submit", handleAddItem);
 
-      // 買いたいもの・数量・備考入力クリア
+      // 買いたいもの・数量・備考入力クリア＆重複買いチェック
       const itemInput = document.getElementById("item-input");
       const qtyInput = document.getElementById("qty-input");
       const noteInput = document.getElementById("note-input");
-      itemInput.addEventListener("input", toggleClearInputBtn);
+      itemInput.addEventListener("input", () => {
+        toggleClearInputBtn();
+        checkDuplicateItemWarning();
+      });
       qtyInput.addEventListener("change", toggleClearInputBtn);
       noteInput.addEventListener("input", toggleClearInputBtn);
       document.getElementById("clear-input-btn").addEventListener("click", () => {
@@ -3099,25 +3627,33 @@ function doGet(e) {
         qtyInput.value = "";
         noteInput.value = "";
         toggleClearInputBtn();
+        checkDuplicateItemWarning();
         itemInput.focus();
       });
 
-      // 期限モード切替
+      // 期限モード切替＆日付選択の即時反映
       document.querySelectorAll(".due-mode-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.selectedDueMode = btn.getAttribute("data-due-mode");
           updateDueButtonsUI();
         });
       });
+      const customDateInput = document.getElementById("custom-date-input");
+      customDateInput.addEventListener("input", updateDueButtonsUI);
+      customDateInput.addEventListener("change", updateDueButtonsUI);
 
-      // 入力者切替
-      document.getElementById("author-btn-0").addEventListener("click", () => {
+      // 入力者切替（選んだ入力者を端末ごとに記憶）
+      document.getElementById("author-btn-0").addEventListener("click", async () => {
         state.selectedAuthorIdx = 0;
+        state.config.selectedAuthorIdx = 0;
         updateAuthorButtonsUI();
+        await persistConfig();
       });
-      document.getElementById("author-btn-1").addEventListener("click", () => {
+      document.getElementById("author-btn-1").addEventListener("click", async () => {
         state.selectedAuthorIdx = 1;
+        state.config.selectedAuthorIdx = 1;
         updateAuthorButtonsUI();
+        await persistConfig();
       });
 
       // 入力者名編集モーダル
@@ -3132,32 +3668,32 @@ function doGet(e) {
       document.getElementById("cancel-authors-modal-btn").addEventListener("click", () => {
         document.getElementById("authors-modal").classList.add("hidden");
       });
-      document.getElementById("authors-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const n0 = document.getElementById("author-name-0").value.trim() || "自分";
-        const n1 = document.getElementById("author-name-1").value.trim() || "パートナー";
-        state.config.authors = [n0, n1];
-        await persistConfig();
-        document.getElementById("authors-modal").classList.add("hidden");
-        updateAuthorButtonsUI();
-        showToast("入力者の名前を更新しました");
-      });
-
-      // タブ切替
+      // タブ切替＆フィルター切替
       document.getElementById("nav-tab-input").addEventListener("click", () => switchTab("input"));
       document.getElementById("nav-tab-list").addEventListener("click", () => switchTab("list"));
       document.getElementById("recent-to-list-btn").addEventListener("click", () => switchTab("list"));
-
-      // リストフィルター・検索・並び替え
       document.querySelectorAll(".filter-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.filterStatus = btn.getAttribute("data-filter");
           renderShoppingList();
         });
       });
-      document.getElementById("list-search-input").addEventListener("input", (e) => {
+
+      // 検索＆並び替え
+      const searchInput = document.getElementById("list-search-input");
+      const searchClearBtn = document.getElementById("list-search-clear-btn");
+      searchInput.addEventListener("input", (e) => {
         state.searchQuery = e.target.value.trim();
+        if (state.searchQuery.length > 0) searchClearBtn.classList.remove("hidden");
+        else searchClearBtn.classList.add("hidden");
         renderShoppingList();
+      });
+      searchClearBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        state.searchQuery = "";
+        searchClearBtn.classList.add("hidden");
+        renderShoppingList();
+        searchInput.focus();
       });
       document.getElementById("list-sort-select").addEventListener("change", (e) => {
         state.sortBy = e.target.value;
@@ -3241,8 +3777,10 @@ function doGet(e) {
           closeAdminModal();
         }
       });
+
       document.getElementById("save-admin-btn").addEventListener("click", handleSaveAdminConfig);
       document.getElementById("test-gas-btn").addEventListener("click", handleTestAndSyncGas);
+      document.getElementById("verify-transfer-btn").addEventListener("click", handleVerifyTransferToSheet);
       document.getElementById("push-all-to-sheet-btn").addEventListener("click", () => pushAllItemsToGAS({ silent: false }));
       document.getElementById("retry-pending-btn").addEventListener("click", async () => {
         const res = await flushPendingOps();
